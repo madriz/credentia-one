@@ -45,7 +45,6 @@ License: Apache 2.0
 - /about (project background)
 - /employer (employer info + Web3Forms contact form)
 - /privacy (privacy policy)
-- /roadmap (Chrome extension, mobile app, Word/Docs plugin plans)
 
 ## Key Files
 - app/ -- Next.js pages and layouts
@@ -66,13 +65,12 @@ License: Apache 2.0
 - v1 (commit acae949): Initial build. Landing page, 7-step builder, verify page, GA4, Supabase tokens.
 - v2 (commit c244aff): Resume upload, validation, autocomplete skills/languages, about page, cookie consent, dual JSON+MD export, crypto.subtle fallback.
 - v3 (commit 6e0f4ad): Nav restructure, mobile hamburger, privacy policy, employer placeholder, skills UX overhaul, compliance fixes, visa presets, notice period dropdown, schema conformance fixes.
-- v4 (this commit): Download page redesign, Canadian flag, employer page with contact form, privacy updates, roadmap page, project status file.
+- v4 (commit 2167bca): Download page redesign, Canadian flag, employer page with contact form, privacy updates, roadmap page, project status file.
+- v5 (this commit): Removed public roadmap. Cleaned up backlog.
 
 ## Open Items / Backlog
 - Build the Receiver portal (madriz/credentia-receiver)
-- Chrome extension (Manifest V3, ATS field mapping)
-- Mobile app (React Native, local storage)
-- Word/Google Docs plugin
+- Explore additional delivery channels (browser extension, mobile, office plugins) based on adoption
 - Employer onboarding flow
 - Schema v1.1: additional compliance blocks for EU (GDPR), UK, Australia, India
 - Resume parser improvements (better heuristics for PDF extraction)
