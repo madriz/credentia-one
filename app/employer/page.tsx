@@ -96,6 +96,71 @@ export default function EmployerPage() {
           </div>
         </section>
 
+        <section className="mb-16">
+          <div className="max-w-3xl">
+            <h2 className="font-serif text-2xl text-text-primary mb-4">
+              One-click apply
+            </h2>
+            <p className="text-text-body mb-10">
+              This is what the future of job applications looks like. A single button
+              on your careers page. No forms, no file uploads, no 20-minute portals.
+              The candidate clicks once, their Credentia One file is submitted, and
+              your systems receive structured, verified data instantly.
+            </p>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <div
+              className="w-full rounded-lg border bg-white"
+              style={{
+                maxWidth: 480,
+                borderColor: '#E5E7EB',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+              }}
+            >
+              <div className="p-6">
+                <div className="text-sm text-text-muted mb-1">Acme Corporation</div>
+                <div className="text-xl font-bold text-text-primary mb-1">
+                  Senior Product Manager
+                </div>
+                <div className="text-sm text-text-muted">Toronto, ON | Hybrid</div>
+              </div>
+              <div className="border-t" style={{ borderColor: '#E5E7EB' }} />
+              <div className="p-6 flex gap-3">
+                <button
+                  type="button"
+                  disabled
+                  className="flex-1 py-2.5 px-4 rounded-md border text-sm font-medium"
+                  style={{
+                    borderColor: '#D1D5DB',
+                    color: '#9CA3AF',
+                    cursor: 'default',
+                    background: 'transparent',
+                  }}
+                >
+                  Upload Resume
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  className="flex-1 py-2.5 px-4 rounded-md text-sm font-medium text-white"
+                  style={{
+                    background: '#00ACED',
+                    cursor: 'default',
+                  }}
+                >
+                  Apply with Credentia One
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-xs text-text-muted italic">
+            Mockup. Illustrating the candidate experience when employers accept
+            Credentia One files.
+          </p>
+        </section>
+
         <section className="max-w-3xl mb-16">
           <h2 className="font-serif text-2xl text-text-primary mb-4">
             Security and simplicity
