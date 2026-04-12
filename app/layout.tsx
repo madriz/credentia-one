@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Newsreader, JetBrains_Mono } from 'next/font/google';
-import Script from 'next/script';
+import CookieConsent from '@/components/shared/CookieConsent';
 import './globals.css';
 
 const newsreader = Newsreader({
@@ -18,7 +18,6 @@ const jetbrains = JetBrains_Mono({
 });
 
 const SITE_URL = 'https://credentia.one';
-const GA_ID = 'G-1N55B2TSSX';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -28,6 +27,12 @@ export const metadata: Metadata = {
   },
   description:
     'The open document standard that replaces repetitive job applications with a single portable file. Fill out your data once, use it everywhere.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.svg',
+  },
   openGraph: {
     title: 'Credentia One | One File. Any Employer. Any Country.',
     description:
@@ -54,18 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${newsreader.variable} ${jetbrains.variable}`}>
       <body>
         {children}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="ga4-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `}
-        </Script>
+        <CookieConsent />
       </body>
     </html>
   );

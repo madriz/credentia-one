@@ -1,3 +1,4 @@
+import { sha256 } from 'js-sha256';
 import type {
   CredentiaDocument,
   FormState,
@@ -9,31 +10,48 @@ import type {
   Compliance,
   Preferences,
 } from './schema';
+import { formatWorkLocation } from './schema';
 import { getSupabase } from './supabase';
+import { buildMarkdown } from './markdown';
 
 const VERSION = '1.0.0';
 const EXPIRY_DAYS = 90;
 
 export async function sha256Hex(input: string): Promise<string> {
-  const data = new TextEncoder().encode(input);
-  const buffer = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(buffer))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+  // Prefer crypto.subtle (secure contexts), fall back to js-sha256
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    try {
+      const data = new TextEncoder().encode(input);
+      const buffer = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+    } catch {
+      // crypto.subtle can fail in insecure contexts
+    }
+  }
+  return sha256(input);
 }
 
-function trimWork(entries: WorkEntry[]): WorkEntry[] {
+// Flatten locationDetail into a string for the output document
+function resolveLocation(entry: WorkEntry): string | undefined {
+  if (entry.locationDetail) return formatWorkLocation(entry.locationDetail) || undefined;
+  return entry.location?.trim() || undefined;
+}
+
+function trimWork(entries: WorkEntry[]): Omit<WorkEntry, 'locationDetail'>[] {
   return entries
     .filter((w) => w.company.trim() || w.position.trim())
     .map((w) => {
-      const cleaned: WorkEntry = {
+      const loc = resolveLocation(w);
+      const cleaned: Omit<WorkEntry, 'locationDetail'> = {
         company: w.company.trim(),
         position: w.position.trim(),
         startDate: w.startDate,
         current: w.current,
         highlights: w.highlights.map((h) => h.trim()).filter(Boolean),
       };
-      if (w.location?.trim()) cleaned.location = w.location.trim();
+      if (loc) cleaned.location = loc;
       if (w.description?.trim()) cleaned.description = w.description.trim();
       if (w.url?.trim()) cleaned.url = w.url.trim();
       if (!w.current && w.endDate && (w.endDate.month || w.endDate.year)) {
@@ -123,10 +141,10 @@ function trimCompliance(c: Compliance): Compliance {
 
 function trimPreferences(p: Preferences): Preferences {
   const result: Preferences = {
+    desiredRoles: p.desiredRoles.map((r) => r.trim()).filter(Boolean),
     workArrangement: p.workArrangement,
     willingToRelocate: p.willingToRelocate,
   };
-  if (p.desiredRole?.trim()) result.desiredRole = p.desiredRole.trim();
   if (p.salary && (p.salary.min !== undefined || p.salary.max !== undefined)) {
     result.salary = p.salary;
   }
@@ -162,7 +180,7 @@ export function buildDocument(
       expiresAt: meta.expiresAt,
     },
     basics,
-    work: trimWork(form.work),
+    work: trimWork(form.work) as WorkEntry[],
     education: trimEducation(form.education),
     skills: trimSkills(form.skills),
     certificates: trimCertificates(form.certificates),
@@ -175,8 +193,10 @@ export function buildDocument(
 export interface GenerateResult {
   document: CredentiaDocument;
   json: string;
+  markdown: string;
   token: string;
-  filename: string;
+  jsonFilename: string;
+  mdFilename: string;
   verifyUrl: string;
   registered: boolean;
 }
@@ -206,21 +226,25 @@ export async function generateCredentiaFile(form: FormState): Promise<GenerateRe
   }
 
   const json = JSON.stringify(document, null, 2);
+  const markdown = buildMarkdown(document);
   const first = (document.basics.firstName || 'credentia').toLowerCase().replace(/\s+/g, '-');
   const last = (document.basics.lastName || 'file').toLowerCase().replace(/\s+/g, '-');
-  const filename = `${first}-${last}.credentia.json`;
+  const jsonFilename = `${first}-${last}.credentia.json`;
+  const mdFilename = `${first}-${last}.credentia.md`;
   return {
     document,
     json,
+    markdown,
     token,
-    filename,
+    jsonFilename,
+    mdFilename,
     verifyUrl: document.$credentia.verifyUrl,
     registered,
   };
 }
 
-export function downloadJson(filename: string, json: string): void {
-  const blob = new Blob([json], { type: 'application/json' });
+export function downloadFile(filename: string, content: string, type: string): void {
+  const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

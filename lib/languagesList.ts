@@ -1,0 +1,27 @@
+// Comprehensive list of world languages for autocomplete.
+
+export const LANGUAGES_LIST: string[] = [
+  'Afrikaans', 'Albanian', 'Amharic', 'Arabic', 'Armenian', 'Assamese',
+  'Azerbaijani', 'Basque', 'Belarusian', 'Bengali', 'Bosnian', 'Bulgarian',
+  'Burmese', 'Catalan', 'Cebuano', 'Chichewa', 'Chinese (Cantonese)',
+  'Chinese (Mandarin)', 'Chinese (Simplified)', 'Chinese (Traditional)',
+  'Corsican', 'Croatian', 'Czech', 'Danish', 'Dutch', 'English',
+  'Esperanto', 'Estonian', 'Fijian', 'Filipino', 'Finnish', 'French',
+  'Galician', 'Georgian', 'German', 'Greek', 'Guarani', 'Gujarati',
+  'Haitian Creole', 'Hausa', 'Hawaiian', 'Hebrew', 'Hindi', 'Hmong',
+  'Hungarian', 'Icelandic', 'Igbo', 'Indonesian', 'Irish', 'Italian',
+  'Japanese', 'Javanese', 'Kannada', 'Kazakh', 'Khmer', 'Kinyarwanda',
+  'Korean', 'Kurdish', 'Kyrgyz', 'Lao', 'Latin', 'Latvian', 'Lithuanian',
+  'Luxembourgish', 'Macedonian', 'Malagasy', 'Malay', 'Malayalam', 'Maltese',
+  'Maori', 'Marathi', 'Mongolian', 'Nepali', 'Norwegian', 'Odia', 'Pashto',
+  'Persian', 'Polish', 'Portuguese', 'Portuguese (Brazilian)',
+  'Portuguese (European)', 'Punjabi', 'Romanian', 'Russian', 'Samoan',
+  'Scottish Gaelic', 'Serbian', 'Sesotho', 'Shona', 'Sindhi', 'Sinhala',
+  'Slovak', 'Slovenian', 'Somali', 'Spanish', 'Spanish (Latin American)',
+  'Spanish (European)', 'Sundanese', 'Swahili', 'Swedish', 'Tajik', 'Tamil',
+  'Tatar', 'Telugu', 'Thai', 'Tibetan', 'Tigrinya', 'Tongan', 'Turkish',
+  'Turkmen', 'Ukrainian', 'Urdu', 'Uyghur', 'Uzbek', 'Vietnamese', 'Welsh',
+  'Xhosa', 'Yiddish', 'Yoruba', 'Zulu',
+  'American Sign Language (ASL)', 'British Sign Language (BSL)',
+  'French Sign Language (LSF)', 'International Sign',
+];

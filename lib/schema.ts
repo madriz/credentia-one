@@ -42,10 +42,18 @@ export interface DateYM {
   year: string;
 }
 
+export interface WorkLocationDetail {
+  city: string;
+  region: string;
+  countryCode: string;
+  remote: boolean;
+}
+
 export interface WorkEntry {
   company: string;
   position: string;
   location?: string;
+  locationDetail: WorkLocationDetail;
   description?: string;
   url?: string;
   startDate: DateYM;
@@ -119,7 +127,7 @@ export interface SalaryRange {
 }
 
 export interface Preferences {
-  desiredRole?: string;
+  desiredRoles: string[];
   salary?: SalaryRange;
   workArrangement: string[];
   willingToRelocate: 'Yes' | 'No' | '';
@@ -142,6 +150,16 @@ export interface CredentiaDocument {
 export type FormState = Omit<CredentiaDocument, '$credentia'>;
 
 export const EMPTY_DATE: DateYM = { month: '', year: '' };
+
+export function emptyWorkLocation(): WorkLocationDetail {
+  return { city: '', region: '', countryCode: '', remote: false };
+}
+
+export function formatWorkLocation(detail: WorkLocationDetail): string {
+  if (detail.remote) return 'Remote';
+  const parts = [detail.city, detail.region, detail.countryCode].filter(Boolean);
+  return parts.join(', ');
+}
 
 export function emptyForm(): FormState {
   return {
@@ -168,7 +186,7 @@ export function emptyForm(): FormState {
       {
         company: '',
         position: '',
-        location: '',
+        locationDetail: emptyWorkLocation(),
         description: '',
         url: '',
         startDate: { ...EMPTY_DATE },
@@ -190,7 +208,7 @@ export function emptyForm(): FormState {
         courses: [''],
       },
     ],
-    skills: [{ category: '', level: 'Intermediate', keywords: [] }],
+    skills: [],
     certificates: [],
     languages: [{ language: '', fluency: 'Fluent' }],
     compliance: {
@@ -213,7 +231,7 @@ export function emptyForm(): FormState {
       },
     },
     preferences: {
-      desiredRole: '',
+      desiredRoles: [''],
       salary: { min: undefined, max: undefined, currency: 'USD', period: 'Annual' },
       workArrangement: [],
       willingToRelocate: '',

@@ -18,6 +18,9 @@ export default function Nav() {
           <Link href="/verify" className="text-text-body hover:text-accent">
             Verify
           </Link>
+          <Link href="/about" className="text-text-body hover:text-accent">
+            About
+          </Link>
           <a
             href="https://github.com/madriz/credentia-one"
             target="_blank"

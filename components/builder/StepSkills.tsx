@@ -3,6 +3,9 @@ import type { SkillGroup, Certificate, Language } from '@/lib/schema';
 import { EMPTY_DATE } from '@/lib/schema';
 import { FormField, SelectField, MonthYearField } from './FormField';
 import { ArrayField } from './ArrayField';
+import AutocompleteInput from './AutocompleteInput';
+import { SKILLS_LIST } from '@/lib/skillsList';
+import { LANGUAGES_LIST } from '@/lib/languagesList';
 
 interface Props {
   skills: SkillGroup[];
@@ -36,6 +39,9 @@ function KeywordChips({
   onChange: (next: string[]) => void;
 }) {
   const [draft, setDraft] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const commit = (raw: string) => {
     const parts = raw
       .split(',')
@@ -45,39 +51,89 @@ function KeywordChips({
     const next = Array.from(new Set([...keywords, ...parts]));
     onChange(next);
   };
+
+  const updateSuggestions = (val: string) => {
+    if (val.length >= 2) {
+      const lower = val.toLowerCase();
+      const matches = SKILLS_LIST.filter(
+        (s) => s.toLowerCase().startsWith(lower) && !keywords.includes(s),
+      ).slice(0, 10);
+      setSuggestions(matches);
+      setShowSuggestions(matches.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const selectSuggestion = (skill: string) => {
+    const next = Array.from(new Set([...keywords, skill]));
+    onChange(next);
+    setDraft('');
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   return (
-    <div>
+    <div className="relative">
       <div className="label-base">Keywords</div>
       <input
         type="text"
         className="input-base"
         value={draft}
-        placeholder="Comma-separated, e.g. Python, JavaScript, SQL"
+        placeholder="Type to search skills, or comma-separated"
         onChange={(e) => {
           const v = e.target.value;
           if (v.includes(',')) {
             commit(v);
             setDraft('');
+            setShowSuggestions(false);
           } else {
             setDraft(v);
+            updateSuggestions(v);
           }
         }}
         onBlur={() => {
+          setTimeout(() => setShowSuggestions(false), 150);
           if (draft.trim()) {
             commit(draft);
             setDraft('');
           }
         }}
+        onFocus={() => {
+          if (draft.length >= 2) updateSuggestions(draft);
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            if (draft.trim()) {
+            if (suggestions.length > 0 && showSuggestions) {
+              selectSuggestion(suggestions[0]);
+            } else if (draft.trim()) {
               commit(draft);
               setDraft('');
             }
+          } else if (e.key === 'Escape') {
+            setShowSuggestions(false);
           }
         }}
+        autoComplete="off"
       />
+      {showSuggestions && suggestions.length > 0 && (
+        <ul className="absolute z-20 left-0 right-0 mt-1 max-h-48 overflow-auto border border-border rounded bg-bg-card shadow-md">
+          {suggestions.map((s) => (
+            <li
+              key={s}
+              className="px-3 py-2 text-sm cursor-pointer text-text-body hover:bg-bg-warm"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                selectSuggestion(s);
+              }}
+            >
+              {s}
+            </li>
+          ))}
+        </ul>
+      )}
       {keywords.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {keywords.map((kw, i) => (
@@ -118,7 +174,7 @@ export default function StepSkills(props: Props) {
           onChange={props.onSkills}
           empty={() => ({ category: '', level: 'Intermediate', keywords: [] })}
           addLabel="Add Skill Group"
-          minItems={1}
+          minItems={0}
           renderItem={(group, _i, update) => (
             <div className="space-y-5">
               <div className="grid md:grid-cols-2 gap-5">
@@ -188,10 +244,17 @@ export default function StepSkills(props: Props) {
           onChange={props.onLanguages}
           empty={() => ({ language: '', fluency: 'Fluent' })}
           addLabel="Add Language"
-          minItems={1}
+          minItems={0}
           renderItem={(lang, _i, update) => (
             <div className="grid md:grid-cols-2 gap-5">
-              <FormField label="Language" required value={lang.language} onChange={(v) => update({ ...lang, language: v })} />
+              <AutocompleteInput
+                label="Language"
+                required
+                value={lang.language}
+                onChange={(v) => update({ ...lang, language: v })}
+                suggestions={LANGUAGES_LIST}
+                placeholder="Type to search"
+              />
               <SelectField
                 label="Fluency"
                 value={lang.fluency}

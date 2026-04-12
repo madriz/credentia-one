@@ -13,7 +13,7 @@ export default function Hero() {
       </p>
       <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4">
         <Link href="/builder" className="btn-primary">
-          Build Your File
+          Build Your Credentia One File
         </Link>
         <a
           href="https://github.com/madriz/credentia-one"

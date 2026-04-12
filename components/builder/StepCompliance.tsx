@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Compliance } from '@/lib/schema';
-import { COUNTRIES } from '@/lib/countries';
+import CountryMultiSelect from './CountryMultiSelect';
 
 interface Props {
   value: Compliance;
@@ -99,12 +99,6 @@ export default function StepCompliance({ value, onChange }: Props) {
   const setCa = <K extends keyof typeof ca>(key: K, v: (typeof ca)[K]) =>
     onChange({ ...value, canadaEmploymentEquity: { ...ca, [key]: v } });
 
-  const toggleCountry = (code: string) => {
-    const list = value.workAuthorization.countries;
-    const next = list.includes(code) ? list.filter((c) => c !== code) : [...list, code];
-    setAuth('countries', next);
-  };
-
   const toggleRace = (race: string) => {
     const list = us.raceEthnicity;
     const next = list.includes(race) ? list.filter((r) => r !== race) : [...list, race];
@@ -149,21 +143,11 @@ export default function StepCompliance({ value, onChange }: Props) {
           </div>
         </div>
 
-        <div>
-          <div className="label-base">Countries where you hold authorization</div>
-          <div className="max-h-48 overflow-y-auto border border-border rounded p-3 grid grid-cols-2 md:grid-cols-3 gap-1">
-            {COUNTRIES.map((c) => (
-              <label key={c.code} className="flex items-center gap-2 text-xs text-text-body">
-                <input
-                  type="checkbox"
-                  checked={value.workAuthorization.countries.includes(c.code)}
-                  onChange={() => toggleCountry(c.code)}
-                />
-                {c.code} - {c.name}
-              </label>
-            ))}
-          </div>
-        </div>
+        <CountryMultiSelect
+          label="Countries where you hold authorization"
+          value={value.workAuthorization.countries}
+          onChange={(countries) => setAuth('countries', countries)}
+        />
 
         <div>
           <div className="label-base">Do you require visa sponsorship?</div>

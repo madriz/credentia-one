@@ -20,7 +20,7 @@ export default function VerifyPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = 'Verify a Credentia File | Credentia One';
+    document.title = 'Verify a Credentia One File | Credentia One';
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const t = params.get('token');
@@ -64,7 +64,7 @@ export default function VerifyPage() {
       <Nav />
       <main className="container-content py-12 max-w-2xl">
         <h1 className="font-serif text-3xl md:text-4xl text-text-primary mb-4">
-          Verify a Credentia file
+          Verify a Credentia One file
         </h1>
         <p className="text-text-body mb-8">
           Paste a Credentia token below to check whether it was generated using the

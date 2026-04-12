@@ -1,4 +1,4 @@
-import type { FormState } from './schema';
+import type { FormState, DateYM } from './schema';
 
 export interface RequirementCheck {
   label: string;
@@ -34,12 +34,6 @@ export function checkCompleteness(form: FormState): RequirementCheck[] {
       ),
     },
     {
-      label: 'At least one skill group with category and keywords',
-      ok: form.skills.some(
-        (s) => s.category.trim().length > 0 && s.keywords.length > 0,
-      ),
-    },
-    {
       label: 'Work authorization answered',
       ok: form.compliance.workAuthorization.authorized.length > 0,
     },
@@ -66,6 +60,28 @@ export function isValidUrl(value: string): boolean {
   }
 }
 
+export function dateToNum(d: DateYM): number {
+  const y = parseInt(d.year, 10) || 0;
+  const m = parseInt(d.month, 10) || 0;
+  return y * 12 + m;
+}
+
+export function isDateFilled(d: DateYM | undefined): boolean {
+  return !!(d && d.month && d.year);
+}
+
+export function isEndDateBeforeStart(start: DateYM, end: DateYM): boolean {
+  if (!isDateFilled(start) || !isDateFilled(end)) return false;
+  return dateToNum(end) < dateToNum(start);
+}
+
+export function isDateInFuture(d: DateYM): boolean {
+  if (!isDateFilled(d)) return false;
+  const now = new Date();
+  const currentNum = (now.getFullYear()) * 12 + (now.getMonth() + 1);
+  return dateToNum(d) > currentNum;
+}
+
 export function validateStep(step: number, form: FormState): string[] {
   const errors: string[] = [];
   if (step === 1) {
@@ -87,6 +103,17 @@ export function validateStep(step: number, form: FormState): string[] {
     if (!hasOne) {
       errors.push('At least one work entry with company, position, and start date is required.');
     }
+    for (let i = 0; i < form.work.length; i++) {
+      const w = form.work[i];
+      if (!w.current && isDateFilled(w.endDate) && isDateFilled(w.startDate)) {
+        if (isEndDateBeforeStart(w.startDate, w.endDate!)) {
+          errors.push(`Position ${i + 1}: End date must be after start date.`);
+        }
+        if (isDateInFuture(w.endDate!)) {
+          errors.push(`Position ${i + 1}: End date cannot be in the future.`);
+        }
+      }
+    }
   }
   if (step === 3) {
     const hasOne = form.education.some(
@@ -95,19 +122,21 @@ export function validateStep(step: number, form: FormState): string[] {
     if (!hasOne) {
       errors.push('At least one education entry with institution, field, and degree is required.');
     }
-  }
-  if (step === 4) {
-    const hasOne = form.skills.some(
-      (s) => s.category.trim() && s.keywords.length > 0,
-    );
-    if (!hasOne) {
-      errors.push('At least one skill group with category and keywords is required.');
+    for (let i = 0; i < form.education.length; i++) {
+      const e = form.education[i];
+      if (isDateFilled(e.endDate) && isDateFilled(e.startDate)) {
+        if (isEndDateBeforeStart(e.startDate!, e.endDate!)) {
+          errors.push(`Education ${i + 1}: End date must be after start date.`);
+        }
+      }
     }
   }
+  // Step 4: no required fields (skills, certs, languages are optional)
   if (step === 5) {
     if (!form.compliance.workAuthorization.authorized) {
       errors.push('Work authorization status is required.');
     }
   }
+  // Step 6: no required fields
   return errors;
 }

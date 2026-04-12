@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { FormState } from '@/lib/schema';
 import { checkCompleteness, isComplete } from '@/lib/validation';
-import { buildDocument, generateCredentiaFile, downloadJson } from '@/lib/token';
+import { buildDocument, generateCredentiaFile, downloadFile } from '@/lib/token';
 
 interface Props {
   form: FormState;
@@ -57,7 +57,10 @@ export default function StepReview({ form }: Props) {
     setError(null);
     try {
       const result = await generateCredentiaFile(form);
-      downloadJson(result.filename, result.json);
+      downloadFile(result.jsonFilename, result.json, 'application/json');
+      setTimeout(() => {
+        downloadFile(result.mdFilename, result.markdown, 'text/markdown');
+      }, 300);
       setVerifyUrl(result.verifyUrl);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Generation failed.');
@@ -116,7 +119,7 @@ export default function StepReview({ form }: Props) {
           className="border-l-4 p-4 text-sm rounded"
           style={{ background: '#E6F8EE', borderColor: '#16A34A', color: '#1A1A1A' }}
         >
-          <div className="font-medium mb-2">Generated and registered.</div>
+          <div className="font-medium mb-2">Generated and registered. Two files downloaded (JSON and Markdown).</div>
           <div className="break-all mb-3">{verifyUrl}</div>
           <button type="button" onClick={copyUrl} className="btn-outline">
             {copied ? 'Copied' : 'Copy URL'}
