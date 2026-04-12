@@ -59,22 +59,27 @@ export default function AboutPage() {
             For the ecosystem
           </h2>
           <p className="text-text-body">
-            Credentia One is an open standard under the Apache 2.0 license. It is not
-            owned by any company, job board, or ATS vendor. The schema is public. The
-            candidate tool is free. The standard belongs to everyone. Our goal is for
-            &quot;Upload your Credentia One file&quot; to become as common as &quot;Upload
-            your resume.&quot;
+            The Credentia One schema is open source under the Apache 2.0 license. The
+            candidate tool is free and will remain free. The verification API is a
+            commercial service that ensures file integrity and funds the ongoing
+            development of the standard.
           </p>
         </section>
 
         <section>
           <h2 className="font-serif text-2xl text-text-primary mb-4">How it is built</h2>
-          <p className="text-text-body">
+          <p className="text-text-body mb-4">
             Credentia One is a static website. The candidate form runs entirely in your
             browser. No account required. No data stored on our servers. When you generate
             your file, a cryptographic hash is registered with our verification service so
             employers can confirm your file was generated using the Credentia One
             standard. That hash contains no personal information.
+          </p>
+          <p className="text-text-body">
+            Employers access the verification API through a simple REST endpoint. Each
+            API key is tied to registered job postings. Verification responses are logged
+            for audit purposes. No candidate data passes through the verification
+            service. Only cryptographic hashes are checked.
           </p>
         </section>
       </main>

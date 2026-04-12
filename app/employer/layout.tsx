@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'For Employers',
-  description: 'The Credentia One employer portal. Receive, verify, and process structured candidate data.',
+  description:
+    'Receive structured, verified candidate data through the Credentia One standard. Zero parsing errors. Pay per job posting.',
   alternates: { canonical: 'https://credentia.one/employer/' },
 };
 

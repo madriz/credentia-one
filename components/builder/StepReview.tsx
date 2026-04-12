@@ -114,9 +114,10 @@ function DownloadSection({
         </h3>
         <p className="text-xs text-text-muted mb-4">
           A unique cryptographic fingerprint of your file has been registered with
-          Credentia One. This allows employers to confirm that your file was generated
-          using the Credentia One standard and has not been altered. You do not need to
-          do anything with this token. It is embedded in your file automatically.
+          Credentia One. When you submit this file to an employer, they can use the
+          Credentia One verification API to confirm it was generated using the standard
+          and has not been tampered with. This adds a layer of trust to your application
+          without exposing any of your personal data.
         </p>
         <div className="font-mono text-xs p-3 rounded border border-border bg-bg-warm break-all mb-4">
           {result.token}

@@ -76,6 +76,19 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-10">
+          <h2 className="font-serif text-2xl text-text-primary mb-4">Verification API</h2>
+          <p className="text-text-body">
+            When an employer verifies a candidate&apos;s file through the Credentia One
+            API, the following data is processed: the employer&apos;s API key (for
+            authentication) and a cryptographic hash (for token lookup). No candidate
+            personal information is transmitted to or stored by the verification
+            service. Verification requests are logged with the employer&apos;s account
+            ID, the hash checked, the result (verified or not), and the timestamp.
+            These logs are retained for audit and billing purposes.
+          </p>
+        </section>
+
+        <section className="mb-10">
           <h2 className="font-serif text-2xl text-text-primary mb-4">
             PIPEDA (Canada) compliance
           </h2>

@@ -11,7 +11,7 @@ import Footer from '@/components/landing/Footer';
 export const metadata: Metadata = {
   title: 'Credentia One | One File. Any Employer. Any Country.',
   description:
-    'The open document standard that replaces repetitive job applications with a single portable file. Fill out your data once, use it everywhere.',
+    'Credentia One is an open document standard for job applications. Free for candidates. Verified by employers. One file replaces hundreds of repetitive forms.',
   alternates: { canonical: 'https://credentia.one/' },
 };
 

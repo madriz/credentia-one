@@ -9,7 +9,10 @@ export default function Footer() {
             <span className="font-bold" style={{ color: '#1A1A1A' }}>Credentia</span>{' '}
             <span className="font-bold" style={{ color: '#00ACED' }}>One</span>
           </div>
-          <div className="text-text-muted mt-1">
+          <div className="text-text-body mt-1">
+            Free for candidates. Verified by employers.
+          </div>
+          <div className="text-text-muted text-xs mt-1">
             Standardizing how the world moves professional data.
           </div>
         </div>

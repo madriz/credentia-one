@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Nav from '@/components/shared/Nav';
 import Footer from '@/components/landing/Footer';
 import { getSupabase } from '@/lib/supabase';
@@ -90,24 +91,34 @@ export default function VerifyPage() {
         </div>
 
         {status === 'found' && record && (
-          <div
-            className="border-l-4 p-5 rounded"
-            style={{ background: '#E6F8EE', borderColor: '#16A34A' }}
-          >
-            <div className="font-serif text-xl text-text-primary mb-2">Verified.</div>
-            <p className="text-text-body mb-3">
-              This file was generated using the Credentia One standard.
+          <div>
+            <div
+              className="border-l-4 p-5 rounded mb-4"
+              style={{ background: '#E6F8EE', borderColor: '#16A34A' }}
+            >
+              <div className="font-serif text-xl text-text-primary mb-2">
+                Verified.
+              </div>
+              <p className="text-text-body mb-3">
+                This file was generated using the Credentia One standard.
+              </p>
+              <dl className="text-sm grid grid-cols-2 gap-2">
+                <dt className="text-text-muted">Registered on</dt>
+                <dd>
+                  {record.created_at
+                    ? new Date(record.created_at).toLocaleDateString()
+                    : 'Not provided'}
+                </dd>
+                <dt className="text-text-muted">Country</dt>
+                <dd>{record.country_code ?? 'Not provided'}</dd>
+              </dl>
+            </div>
+            <p className="text-sm text-text-muted">
+              Employers: for programmatic verification and audit logging, access the{' '}
+              <Link href="/employer#contact" className="text-accent">
+                Credentia One verification API
+              </Link>.
             </p>
-            <dl className="text-sm grid grid-cols-2 gap-2">
-              <dt className="text-text-muted">Country</dt>
-              <dd>{record.country_code ?? 'Not provided'}</dd>
-              <dt className="text-text-muted">Registered</dt>
-              <dd>
-                {record.created_at
-                  ? new Date(record.created_at).toLocaleDateString()
-                  : 'Not provided'}
-              </dd>
-            </dl>
           </div>
         )}
 
@@ -118,7 +129,9 @@ export default function VerifyPage() {
           >
             <div className="font-serif text-xl text-text-primary mb-2">Not found.</div>
             <p className="text-text-body">
-              This token was not found in the Credentia One registry.
+              This token was not found in the Credentia One registry. The file may not
+              have been generated using credentia.one, or the token may have been
+              entered incorrectly.
             </p>
           </div>
         )}

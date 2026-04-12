@@ -103,8 +103,10 @@ export default function BuilderPage() {
         <p className="text-text-body max-w-3xl mb-10">
           This form generates a .credentia.json file containing your complete
           professional and compliance data. Everything runs in your browser. Nothing is
-          sent to any server until you click Generate, at which point only a
-          cryptographic hash is registered for verification.
+          sent to any server. When you generate your file, a cryptographic hash is
+          registered with the Credentia One verification service. This hash contains no
+          personal information. It allows employers to confirm that your file is
+          authentic and unmodified.
         </p>
 
         {step === -1 && <QuickStart onComplete={handleQuickStart} />}

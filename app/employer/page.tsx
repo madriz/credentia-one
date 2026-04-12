@@ -7,6 +7,33 @@ import Footer from '@/components/landing/Footer';
 const FORM_URL = 'https://api.web3forms.com/submit';
 const ACCESS_KEY = '535b11ae-5871-4940-a7ff-3d9882ff32d1';
 
+const API_EXAMPLE = `POST https://mbbpynoshxkvhqonyczd.supabase.co/rest/v1/rpc/verify_token
+
+Headers:
+  apikey: [your-supabase-anon-key]
+  Content-Type: application/json
+
+Body:
+{
+  "p_api_key": "[your-employer-api-key]",
+  "p_token_hash": "[candidate-file-token-hash]"
+}
+
+Response (verified):
+{
+  "verified": true,
+  "token_hash": "5549dccc...",
+  "country_code": "CA",
+  "generated_at": "2026-04-12T12:47:07Z",
+  "verified_by": "Your Company"
+}
+
+Response (not verified):
+{
+  "verified": false,
+  "error": "Token not found in registry"
+}`;
+
 export default function EmployerPage() {
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -39,26 +66,49 @@ export default function EmployerPage() {
       <main className="container-content py-12">
         <div className="max-w-3xl">
           <h1 className="font-serif text-3xl md:text-5xl text-text-primary mb-6 leading-tight">
-            Receive structured candidate data. Zero parsing errors.
+            Stop parsing. Start processing.
           </h1>
+          <p className="text-text-body text-lg">
+            Credentia One files deliver structured, typed, validated candidate data
+            directly to your systems. Every field is labeled. Every date is formatted.
+            Every compliance disclosure is included. Parsing errors drop to zero.
+          </p>
         </div>
 
-        <section className="max-w-3xl mb-16 mt-10">
+        <section className="max-w-3xl mb-16 mt-14">
           <h2 className="font-serif text-2xl text-text-primary mb-4">
             What changes for you
           </h2>
           <p className="text-text-body mb-4">
-            Credentia One does not replace your existing systems. It standardizes the
-            input. Instead of receiving a PDF that your ATS has to parse (often
-            incorrectly), you receive a .credentia.json file: structured, typed, and
-            validated data that your systems can read without guessing.
+            Credentia One does not replace your ATS, your background check vendor, or
+            your internal workflows. It standardizes the input. Instead of receiving a
+            PDF that your system has to guess at, you receive a .credentia.json file:
+            structured data that any system can read without ambiguity.
           </p>
           <p className="text-text-body">
-            Your Applicant Tracking System, your background check vendor, your
-            scheduling tools, your internal workflows: none of them need to change.
-            Credentia One sits upstream. It is the format candidates use to deliver
-            their data to you. What you do with it after that is your business.
+            Your Applicant Tracking System, your HRIS, your screening tools: none of
+            them need to change. Credentia One sits upstream. It is the format
+            candidates use to deliver their data to you.
           </p>
+        </section>
+
+        <section className="max-w-3xl mb-16">
+          <h2 className="font-serif text-2xl text-text-primary mb-4">
+            Verify every file
+          </h2>
+          <p className="text-text-body mb-6">
+            Each Credentia One file contains a cryptographic token registered at the
+            time of generation. The verification API allows you to confirm that a file
+            is authentic, was generated using the Credentia One standard, and has not
+            been modified. The API is a single endpoint. You send a token hash with your
+            API key. You receive a verification result in milliseconds.
+          </p>
+          <pre
+            className="font-mono text-xs p-5 rounded-lg overflow-auto"
+            style={{ background: '#1A1A1A', color: '#E5E7EB', lineHeight: 1.6 }}
+          >
+            {API_EXAMPLE}
+          </pre>
         </section>
 
         <section className="mb-16">
@@ -69,53 +119,46 @@ export default function EmployerPage() {
             <div>
               <h3 className="font-serif text-xl text-text-primary mb-3">Receive</h3>
               <p className="text-text-body text-sm">
-                Candidates submit a .credentia.json file instead of (or alongside) a
-                traditional resume. The file contains structured professional data,
-                compliance disclosures, and work authorization details in a standardized
-                format.
+                Candidates submit .credentia.json files through your existing channels:
+                email, upload portal, job board. No new infrastructure required.
               </p>
             </div>
             <div>
               <h3 className="font-serif text-xl text-text-primary mb-3">Verify</h3>
               <p className="text-text-body text-sm">
-                Each Credentia One file includes a cryptographic token registered at the
-                time of generation. You can verify the authenticity of any file at
-                credentia.one/verify. The token confirms the file was generated using
-                the standard and has not been modified.
+                Call the verification API with the file&apos;s token. Confirm
+                authenticity in milliseconds. Every verification is logged for your
+                records.
               </p>
             </div>
             <div>
               <h3 className="font-serif text-xl text-text-primary mb-3">Process</h3>
               <p className="text-text-body text-sm">
-                Ingest the structured data into your existing ATS, HRIS, or screening
-                workflows. Because the data is typed and labeled, parsing errors drop to
-                zero. No more guessing whether &quot;2019&quot; is a graduation year or
-                a phone extension.
+                Ingest the structured JSON into your ATS, HRIS, or data pipeline.
+                Workday, Greenhouse, SAP, Oracle, or any system that reads JSON.
               </p>
             </div>
           </div>
         </section>
 
         <section className="mb-16">
-          <div className="max-w-3xl">
-            <h2 className="font-serif text-2xl text-text-primary mb-4">
-              One-click apply
-            </h2>
-            <p className="text-text-body mb-10">
-              This is what the future of job applications looks like. A single button
-              on your careers page. No forms, no file uploads, no 20-minute portals.
-              The candidate clicks once, their Credentia One file is submitted, and
-              your systems receive structured, verified data instantly.
-            </p>
-          </div>
-
+          <h2 className="font-serif text-2xl text-text-primary mb-4 max-w-3xl">
+            One-click apply
+          </h2>
+          <p className="text-text-body mb-10 max-w-3xl">
+            This is what the future of job applications looks like. A single button on
+            your careers page. No forms, no file uploads, no 20-minute portals. The
+            candidate clicks once, their Credentia One file is submitted, and your
+            systems receive structured, verified data instantly.
+          </p>
           <div className="flex justify-center mb-6">
             <div
               className="w-full rounded-lg border bg-white"
               style={{
                 maxWidth: 480,
                 borderColor: '#E5E7EB',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+                boxShadow:
+                  '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
               }}
             >
               <div className="p-6">
@@ -144,17 +187,13 @@ export default function EmployerPage() {
                   type="button"
                   disabled
                   className="flex-1 py-2.5 px-4 rounded-md text-sm font-medium text-white"
-                  style={{
-                    background: '#00ACED',
-                    cursor: 'default',
-                  }}
+                  style={{ background: '#00ACED', cursor: 'default' }}
                 >
                   Apply with Credentia One
                 </button>
               </div>
             </div>
           </div>
-
           <p className="text-center text-xs text-text-muted italic">
             Mockup. Illustrating the candidate experience when employers accept
             Credentia One files.
@@ -162,30 +201,23 @@ export default function EmployerPage() {
         </section>
 
         <section className="max-w-3xl mb-16">
-          <h2 className="font-serif text-2xl text-text-primary mb-4">
-            Security and simplicity
-          </h2>
-          <p className="text-text-body mb-4">
-            Credentia One is a document standard, not a platform. There is no vendor
-            lock-in, no API dependency, no data stored on our servers. The
-            .credentia.json file is a plain text file that follows a published open
-            schema. Your security team can audit every field.
-          </p>
+          <h2 className="font-serif text-2xl text-text-primary mb-4">Security</h2>
           <p className="text-text-body">
-            The architecture is intentionally simple: candidates generate files in their
-            browser, a cryptographic hash is registered for verification, and employers
-            receive the file through their existing channels (email, upload portal, job
-            board). No middleware, no integration required.
+            Credentia One is a document standard, not a platform. There is no vendor
+            lock-in, no middleware, no data stored on our servers. The .credentia.json
+            file is plain text following a published open schema. Your security team can
+            audit every field. The verification API validates cryptographic hashes. It
+            does not receive, process, or store candidate data. The only data that
+            crosses the wire is a hash string and a verification response.
           </p>
         </section>
 
         <section className="max-w-3xl mb-16">
           <h2 className="font-serif text-2xl text-text-primary mb-4">
-            Works with your existing stack
+            Works with your stack
           </h2>
           <p className="text-text-body mb-4">
-            Credentia One files can be ingested by any system that reads JSON. This
-            includes direct integration with major platforms:
+            Credentia One files can be ingested by any system that reads JSON:
           </p>
           <ul className="list-disc pl-6 text-text-body text-sm space-y-2 mb-4">
             <li>
@@ -197,16 +229,41 @@ export default function EmployerPage() {
             <li>Custom internal tools and data pipelines</li>
           </ul>
           <p className="text-text-body">
-            No proprietary connector is required. If your system can read a JSON file,
-            it can read a Credentia One file.
+            No proprietary connector required. If your system reads JSON, it reads
+            Credentia One.
           </p>
         </section>
 
+        <section className="max-w-xl mb-16">
+          <h2 className="font-serif text-2xl text-text-primary mb-4">
+            Pay per job posting
+          </h2>
+          <p className="text-text-body mb-8">
+            Each registered job posting includes unlimited candidate verifications for
+            90 days. No per-candidate fees. No platform subscriptions. No minimum
+            commitments. You pay only for the postings you register.
+          </p>
+          <div
+            className="card text-center"
+            style={{ maxWidth: 400, margin: '0 auto' }}
+          >
+            <h3 className="font-serif text-xl text-text-primary mb-3">
+              Pilot Program
+            </h3>
+            <p className="text-text-body text-sm">
+              We are onboarding early employers at introductory rates. Contact us to
+              discuss your hiring volume and get your API key.
+            </p>
+          </div>
+        </section>
+
         <section className="max-w-xl mb-16" id="contact">
-          <h2 className="font-serif text-2xl text-text-primary mb-4">Get in touch</h2>
+          <h2 className="font-serif text-2xl text-text-primary mb-4">
+            Request API access
+          </h2>
           <p className="text-text-body mb-6">
-            Interested in accepting Credentia One files? Have questions about
-            integration? Contact us.
+            Tell us about your hiring volume and we will set up your verification API
+            key.
           </p>
 
           {submitted ? (
@@ -287,11 +344,7 @@ export default function EmployerPage() {
                   {formError}
                 </p>
               )}
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={sending}
-              >
+              <button type="submit" className="btn-primary" disabled={sending}>
                 {sending ? 'Sending, please wait.' : 'Send'}
               </button>
             </form>
