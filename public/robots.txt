@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://credentia.one/sitemap.xml
