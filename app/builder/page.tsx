@@ -40,7 +40,6 @@ export default function BuilderPage() {
     restoredOnce.current = true;
     const draft = loadDraft();
     if (draft) {
-      // Ensure new fields exist on old drafts
       if (!draft.awards) draft.awards = [];
       if (!draft.compliance.workAuthorization.statuses) {
         draft.compliance.workAuthorization.statuses = [];
@@ -179,7 +178,9 @@ export default function BuilderPage() {
                   onChange={(p) => setForm({ ...form, preferences: p })}
                 />
               )}
-              {step === 6 && <StepReview form={form} />}
+              {step === 6 && (
+                <StepReview form={form} onReset={handleClearAll} />
+              )}
             </div>
 
             {errors.length > 0 && (

@@ -22,6 +22,8 @@ export default function Footer() {
           <span className="text-border">|</span>
           <Link href="/privacy" className="hover:text-accent">Privacy</Link>
           <span className="text-border">|</span>
+          <Link href="/roadmap" className="hover:text-accent">Roadmap</Link>
+          <span className="text-border">|</span>
           <a
             href="https://github.com/madriz/credentia-one"
             target="_blank"

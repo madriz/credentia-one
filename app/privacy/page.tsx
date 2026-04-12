@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Nav from '@/components/shared/Nav';
 import Footer from '@/components/landing/Footer';
 
@@ -65,6 +66,16 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-10">
+          <h2 className="font-serif text-2xl text-text-primary mb-4">Contact form</h2>
+          <p className="text-text-body">
+            When you submit the contact form on our employer page, your name,
+            institution, and email address are processed by Web3Forms (web3forms.com).
+            This data is used solely to respond to your inquiry and is not stored by
+            Credentia One.
+          </p>
+        </section>
+
+        <section className="mb-10">
           <h2 className="font-serif text-2xl text-text-primary mb-4">
             PIPEDA (Canada) compliance
           </h2>
@@ -104,22 +115,12 @@ export default function PrivacyPage() {
         </section>
 
         <section className="mb-10">
-          <h2 className="font-serif text-2xl text-text-primary mb-4">
-            Children&apos;s privacy
-          </h2>
-          <p className="text-text-body">
-            Credentia One is not directed at children under the age of 13. We do not
-            knowingly collect information from children.
-          </p>
-        </section>
-
-        <section className="mb-10">
           <h2 className="font-serif text-2xl text-text-primary mb-4">Contact</h2>
           <p className="text-text-body">
-            For privacy inquiries, contact{' '}
-            <a href="mailto:rodrigo@madriz.ca" className="text-accent">
-              rodrigo@madriz.ca
-            </a>.
+            For privacy inquiries, use the{' '}
+            <Link href="/employer#contact" className="text-accent">
+              contact form on our Employer page
+            </Link>.
           </p>
         </section>
       </main>

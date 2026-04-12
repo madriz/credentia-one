@@ -5,6 +5,7 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import SonnetSection from '@/components/landing/SonnetSection';
 import WhyCredentia from '@/components/landing/WhyCredentia';
 import OpenStandard from '@/components/landing/OpenStandard';
+import MadeInCanada from '@/components/landing/MadeInCanada';
 import Footer from '@/components/landing/Footer';
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function HomePage() {
         <SonnetSection />
         <WhyCredentia />
         <OpenStandard />
+        <MadeInCanada />
       </main>
       <Footer />
     </>
