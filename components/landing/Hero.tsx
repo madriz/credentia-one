@@ -6,6 +6,9 @@ export default function Hero() {
       <h1 className="font-serif text-4xl md:text-6xl text-text-primary leading-tight max-w-3xl">
         One file. Any employer. Any country.
       </h1>
+      <p className="mt-4 font-serif italic text-lg max-w-2xl" style={{ color: '#666666' }}>
+        Standardizing how the world moves professional data.
+      </p>
       <p className="mt-8 max-w-2xl text-lg text-text-body">
         Credentia One is an open document standard that replaces the 20-minute job
         application with a 10-second file transfer. Fill out your professional data

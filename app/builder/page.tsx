@@ -29,7 +29,7 @@ const STEPS = [
 
 export default function BuilderPage() {
   const [form, setForm] = useState<FormState>(() => emptyForm());
-  const [step, setStep] = useState(-1); // -1 = quick start
+  const [step, setStep] = useState(-1);
   const [banner, setBanner] = useState<string | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const debouncedSave = useMemo(() => debounce(saveDraft, 500), []);
@@ -40,6 +40,14 @@ export default function BuilderPage() {
     restoredOnce.current = true;
     const draft = loadDraft();
     if (draft) {
+      // Ensure new fields exist on old drafts
+      if (!draft.awards) draft.awards = [];
+      if (!draft.compliance.workAuthorization.statuses) {
+        draft.compliance.workAuthorization.statuses = [];
+      }
+      if (!draft.preferences.noticePeriodCustom) {
+        draft.preferences.noticePeriodCustom = { amount: '', unit: 'Days' };
+      }
       setForm(draft);
       setStep(0);
       setBanner('Draft restored from your last session.');
@@ -52,6 +60,10 @@ export default function BuilderPage() {
   }, [form, debouncedSave, step]);
 
   const handleQuickStart = (incoming: FormState, message?: string) => {
+    if (!incoming.awards) incoming.awards = [];
+    if (!incoming.compliance.workAuthorization.statuses) {
+      incoming.compliance.workAuthorization.statuses = [];
+    }
     setForm(incoming);
     setStep(0);
     if (message) setBanner(message);
@@ -74,9 +86,7 @@ export default function BuilderPage() {
 
   const handleClearAll = () => {
     if (typeof window === 'undefined') return;
-    const ok = window.confirm(
-      'This will erase all of your draft data. Continue?',
-    );
+    const ok = window.confirm('This will erase all of your draft data. Continue?');
     if (!ok) return;
     clearDraft();
     setForm(emptyForm());
@@ -149,9 +159,11 @@ export default function BuilderPage() {
                 <StepSkills
                   skills={form.skills}
                   certificates={form.certificates}
+                  awards={form.awards}
                   languages={form.languages}
                   onSkills={(s) => setForm({ ...form, skills: s })}
                   onCertificates={(c) => setForm({ ...form, certificates: c })}
+                  onAwards={(a) => setForm({ ...form, awards: a })}
                   onLanguages={(l) => setForm({ ...form, languages: l })}
                 />
               )}

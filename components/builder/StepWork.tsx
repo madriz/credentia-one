@@ -1,9 +1,11 @@
 import type { WorkEntry } from '@/lib/schema';
 import { EMPTY_DATE, emptyWorkLocation } from '@/lib/schema';
 import { COUNTRIES } from '@/lib/countries';
+import { getStatesForCountry } from '@/lib/stateProvinces';
 import { isEndDateBeforeStart, isDateInFuture, isDateFilled } from '@/lib/validation';
 import { FormField, TextAreaField, SelectField, MonthYearField } from './FormField';
 import { ArrayField } from './ArrayField';
+import AutocompleteInput from './AutocompleteInput';
 
 interface Props {
   value: WorkEntry[];
@@ -37,6 +39,9 @@ export default function StepWork({ value, onChange }: Props) {
           const loc = entry.locationDetail ?? emptyWorkLocation();
           const setLoc = <K extends keyof typeof loc>(key: K, v: (typeof loc)[K]) =>
             update({ ...entry, locationDetail: { ...loc, [key]: v } });
+
+          const states = getStatesForCountry(loc.countryCode);
+          const stateOptions = states ? states.map((s) => `${s.name} (${s.code})`) : null;
 
           const endDateError =
             !entry.current && isDateFilled(entry.endDate) && isDateFilled(entry.startDate)
@@ -76,11 +81,26 @@ export default function StepWork({ value, onChange }: Props) {
                 {!loc.remote && (
                   <div className="grid md:grid-cols-3 gap-4">
                     <FormField label="City" value={loc.city} onChange={(v) => setLoc('city', v)} />
-                    <FormField label="State / Province" value={loc.region} onChange={(v) => setLoc('region', v)} />
+                    {stateOptions ? (
+                      <AutocompleteInput
+                        label="State / Province"
+                        value={loc.region}
+                        onChange={(v) => setLoc('region', v)}
+                        suggestions={stateOptions}
+                        placeholder="Type to search"
+                      />
+                    ) : (
+                      <FormField label="State / Province" value={loc.region} onChange={(v) => setLoc('region', v)} />
+                    )}
                     <SelectField
                       label="Country"
                       value={loc.countryCode}
-                      onChange={(v) => setLoc('countryCode', v)}
+                      onChange={(v) => {
+                        update({
+                          ...entry,
+                          locationDetail: { ...loc, countryCode: v, region: v !== loc.countryCode ? '' : loc.region },
+                        });
+                      }}
                       placeholder="Select"
                       options={COUNTRIES.map((c) => ({ value: c.code, label: `${c.code} - ${c.name}` }))}
                     />

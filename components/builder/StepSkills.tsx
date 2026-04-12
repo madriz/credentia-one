@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import type { SkillGroup, Certificate, Language } from '@/lib/schema';
+import type { SkillGroup, Certificate, Award, Language } from '@/lib/schema';
 import { EMPTY_DATE } from '@/lib/schema';
 import { FormField, SelectField, MonthYearField } from './FormField';
 import { ArrayField } from './ArrayField';
 import AutocompleteInput from './AutocompleteInput';
 import { SKILLS_LIST } from '@/lib/skillsList';
+import { SKILL_CATEGORIES } from '@/lib/skillCategories';
 import { LANGUAGES_LIST } from '@/lib/languagesList';
 
 interface Props {
   skills: SkillGroup[];
   certificates: Certificate[];
+  awards: Award[];
   languages: Language[];
   onSkills: (next: SkillGroup[]) => void;
   onCertificates: (next: Certificate[]) => void;
+  onAwards: (next: Award[]) => void;
   onLanguages: (next: Language[]) => void;
 }
 
@@ -43,13 +46,9 @@ function KeywordChips({
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const commit = (raw: string) => {
-    const parts = raw
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const parts = raw.split(',').map((s) => s.trim()).filter(Boolean);
     if (parts.length === 0) return;
-    const next = Array.from(new Set([...keywords, ...parts]));
-    onChange(next);
+    onChange(Array.from(new Set([...keywords, ...parts])));
   };
 
   const updateSuggestions = (val: string) => {
@@ -67,8 +66,7 @@ function KeywordChips({
   };
 
   const selectSuggestion = (skill: string) => {
-    const next = Array.from(new Set([...keywords, skill]));
-    onChange(next);
+    onChange(Array.from(new Set([...keywords, skill])));
     setDraft('');
     setSuggestions([]);
     setShowSuggestions(false);
@@ -84,76 +82,39 @@ function KeywordChips({
         placeholder="Type to search skills, or comma-separated"
         onChange={(e) => {
           const v = e.target.value;
-          if (v.includes(',')) {
-            commit(v);
-            setDraft('');
-            setShowSuggestions(false);
-          } else {
-            setDraft(v);
-            updateSuggestions(v);
-          }
+          if (v.includes(',')) { commit(v); setDraft(''); setShowSuggestions(false); }
+          else { setDraft(v); updateSuggestions(v); }
         }}
         onBlur={() => {
           setTimeout(() => setShowSuggestions(false), 150);
-          if (draft.trim()) {
-            commit(draft);
-            setDraft('');
-          }
+          if (draft.trim()) { commit(draft); setDraft(''); }
         }}
-        onFocus={() => {
-          if (draft.length >= 2) updateSuggestions(draft);
-        }}
+        onFocus={() => { if (draft.length >= 2) updateSuggestions(draft); }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
-            if (suggestions.length > 0 && showSuggestions) {
-              selectSuggestion(suggestions[0]);
-            } else if (draft.trim()) {
-              commit(draft);
-              setDraft('');
-            }
-          } else if (e.key === 'Escape') {
-            setShowSuggestions(false);
-          }
+            if (suggestions.length > 0 && showSuggestions) selectSuggestion(suggestions[0]);
+            else if (draft.trim()) { commit(draft); setDraft(''); }
+          } else if (e.key === 'Escape') setShowSuggestions(false);
         }}
         autoComplete="off"
       />
+      <p className="mt-1 text-xs text-text-muted">Type to search common skills or add your own.</p>
       {showSuggestions && suggestions.length > 0 && (
         <ul className="absolute z-20 left-0 right-0 mt-1 max-h-48 overflow-auto border border-border rounded bg-bg-card shadow-md">
           {suggestions.map((s) => (
-            <li
-              key={s}
-              className="px-3 py-2 text-sm cursor-pointer text-text-body hover:bg-bg-warm"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                selectSuggestion(s);
-              }}
-            >
-              {s}
-            </li>
+            <li key={s} className="px-3 py-2 text-sm cursor-pointer text-text-body hover:bg-bg-warm"
+              onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}>{s}</li>
           ))}
         </ul>
       )}
       {keywords.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {keywords.map((kw, i) => (
-            <span
-              key={`${kw}-${i}`}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-warm text-sm text-text-primary"
-            >
+            <span key={`${kw}-${i}`} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-warm text-sm text-text-primary">
               {kw}
-              <button
-                type="button"
-                aria-label={`Remove ${kw}`}
-                className="text-text-muted hover:text-error"
-                onClick={() => {
-                  const copy = keywords.slice();
-                  copy.splice(i, 1);
-                  onChange(copy);
-                }}
-              >
-                x
-              </button>
+              <button type="button" aria-label={`Remove ${kw}`} className="text-text-muted hover:text-error"
+                onClick={() => { const copy = keywords.slice(); copy.splice(i, 1); onChange(copy); }}>x</button>
             </span>
           ))}
         </div>
@@ -165,7 +126,7 @@ function KeywordChips({
 export default function StepSkills(props: Props) {
   return (
     <div className="space-y-12">
-      <h2 className="font-serif text-2xl text-text-primary">Skills, certificates, languages</h2>
+      <h2 className="font-serif text-2xl text-text-primary">Skills, certificates, languages, awards</h2>
 
       <section>
         <h3 className="font-serif text-xl text-text-primary mb-4">Skills</h3>
@@ -177,24 +138,23 @@ export default function StepSkills(props: Props) {
           minItems={0}
           renderItem={(group, _i, update) => (
             <div className="space-y-5">
-              <div className="grid md:grid-cols-2 gap-5">
-                <FormField
-                  label="Category"
-                  required
-                  value={group.category}
-                  onChange={(v) => update({ ...group, category: v })}
-                  placeholder="e.g. Programming Languages"
-                />
-                <SelectField
-                  label="Proficiency"
-                  value={group.level}
-                  onChange={(v) => update({ ...group, level: v })}
-                  options={PROFICIENCY}
-                />
-              </div>
+              <AutocompleteInput
+                label="Skill Area"
+                required
+                value={group.category}
+                onChange={(v) => update({ ...group, category: v })}
+                suggestions={SKILL_CATEGORIES}
+                placeholder="e.g. Programming, Project Management, Data Analysis, Marketing, Leadership"
+              />
               <KeywordChips
                 keywords={group.keywords}
                 onChange={(kws) => update({ ...group, keywords: kws })}
+              />
+              <SelectField
+                label="Proficiency"
+                value={group.level}
+                onChange={(v) => update({ ...group, level: v })}
+                options={PROFICIENCY}
               />
             </div>
           )}
@@ -206,32 +166,35 @@ export default function StepSkills(props: Props) {
         <ArrayField<Certificate>
           items={props.certificates}
           onChange={props.onCertificates}
-          empty={() => ({
-            name: '',
-            issuer: '',
-            date: { ...EMPTY_DATE },
-            expires: { ...EMPTY_DATE },
-            url: '',
-          })}
+          empty={() => ({ name: '', issuer: '', date: { ...EMPTY_DATE }, expires: { ...EMPTY_DATE }, url: '' })}
           addLabel="Add Certificate"
           minItems={0}
           renderItem={(cert, _i, update) => (
             <div className="grid md:grid-cols-2 gap-5">
               <FormField label="Name" required value={cert.name} onChange={(v) => update({ ...cert, name: v })} />
               <FormField label="Issuer" value={cert.issuer ?? ''} onChange={(v) => update({ ...cert, issuer: v })} />
-              <MonthYearField
-                label="Date"
-                month={cert.date?.month ?? ''}
-                year={cert.date?.year ?? ''}
-                onChange={(d) => update({ ...cert, date: d })}
-              />
-              <MonthYearField
-                label="Expiration"
-                month={cert.expires?.month ?? ''}
-                year={cert.expires?.year ?? ''}
-                onChange={(d) => update({ ...cert, expires: d })}
-              />
+              <MonthYearField label="Date" month={cert.date?.month ?? ''} year={cert.date?.year ?? ''} onChange={(d) => update({ ...cert, date: d })} />
+              <MonthYearField label="Expiration" month={cert.expires?.month ?? ''} year={cert.expires?.year ?? ''} onChange={(d) => update({ ...cert, expires: d })} />
               <FormField label="URL" type="url" value={cert.url ?? ''} onChange={(v) => update({ ...cert, url: v })} />
+            </div>
+          )}
+        />
+      </section>
+
+      <section>
+        <h3 className="font-serif text-xl text-text-primary mb-4">Honours and Awards</h3>
+        <ArrayField<Award>
+          items={props.awards}
+          onChange={props.onAwards}
+          empty={() => ({ title: '', issuer: '', date: { ...EMPTY_DATE }, description: '' })}
+          addLabel="Add Honour or Award"
+          minItems={0}
+          renderItem={(award, _i, update) => (
+            <div className="grid md:grid-cols-2 gap-5">
+              <FormField label="Title" required value={award.title} onChange={(v) => update({ ...award, title: v })} placeholder="e.g. Dean's List, Employee of the Year" />
+              <FormField label="Issuer / Organization" value={award.issuer ?? ''} onChange={(v) => update({ ...award, issuer: v })} placeholder="e.g. University of Toronto, Acme Corp" />
+              <MonthYearField label="Date" month={award.date?.month ?? ''} year={award.date?.year ?? ''} onChange={(d) => update({ ...award, date: d })} />
+              <FormField label="Description" value={award.description ?? ''} onChange={(v) => update({ ...award, description: v })} />
             </div>
           )}
         />

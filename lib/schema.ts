@@ -1,13 +1,4 @@
-// TypeScript interfaces describing the Credentia One JSON document.
-// Mirrors the public schema. Fields marked optional are omitted when empty.
-
-export interface CredentiaMeta {
-  version: string;
-  generatedAt: string;
-  expiresAt: string;
-  token?: string;
-  verifyUrl?: string;
-}
+// TypeScript interfaces for the Credentia One form state and output document.
 
 export interface SocialProfile {
   network: string;
@@ -88,6 +79,13 @@ export interface Certificate {
   url?: string;
 }
 
+export interface Award {
+  title: string;
+  issuer?: string;
+  date?: DateYM;
+  description?: string;
+}
+
 export interface Language {
   language: string;
   fluency: string;
@@ -97,7 +95,8 @@ export interface WorkAuthorization {
   authorized: 'Yes' | 'No' | '';
   countries: string[];
   requiresSponsorship: 'Yes' | 'No' | '';
-  status?: string;
+  statuses: string[];
+  customStatus?: string;
 }
 
 export interface UsEeoc {
@@ -133,21 +132,21 @@ export interface Preferences {
   willingToRelocate: 'Yes' | 'No' | '';
   availableFrom?: DateYM;
   noticePeriod?: string;
+  noticePeriodCustom?: { amount: string; unit: string };
 }
 
-export interface CredentiaDocument {
-  $credentia: CredentiaMeta;
+// FormState is the shape used by the React form
+export interface FormState {
   basics: Basics;
   work: WorkEntry[];
   education: EducationEntry[];
   skills: SkillGroup[];
   certificates: Certificate[];
+  awards: Award[];
   languages: Language[];
   compliance: Compliance;
   preferences: Preferences;
 }
-
-export type FormState = Omit<CredentiaDocument, '$credentia'>;
 
 export const EMPTY_DATE: DateYM = { month: '', year: '' };
 
@@ -210,13 +209,15 @@ export function emptyForm(): FormState {
     ],
     skills: [],
     certificates: [],
+    awards: [],
     languages: [{ language: '', fluency: 'Fluent' }],
     compliance: {
       workAuthorization: {
         authorized: '',
         countries: [],
         requiresSponsorship: '',
-        status: '',
+        statuses: [],
+        customStatus: '',
       },
       unitedStatesEeoc: {
         gender: '',
@@ -237,6 +238,7 @@ export function emptyForm(): FormState {
       willingToRelocate: '',
       availableFrom: { ...EMPTY_DATE },
       noticePeriod: '',
+      noticePeriodCustom: { amount: '', unit: 'Days' },
     },
   };
 }

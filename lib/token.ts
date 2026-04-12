@@ -1,14 +1,15 @@
 import { sha256 } from 'js-sha256';
 import type {
-  CredentiaDocument,
   FormState,
   WorkEntry,
   EducationEntry,
   SkillGroup,
   Certificate,
+  Award,
   Language,
   Compliance,
   Preferences,
+  DateYM,
 } from './schema';
 import { formatWorkLocation } from './schema';
 import { getSupabase } from './supabase';
@@ -18,7 +19,6 @@ const VERSION = '1.0.0';
 const EXPIRY_DAYS = 90;
 
 export async function sha256Hex(input: string): Promise<string> {
-  // Prefer crypto.subtle (secure contexts), fall back to js-sha256
   if (typeof crypto !== 'undefined' && crypto.subtle) {
     try {
       const data = new TextEncoder().encode(input);
@@ -27,64 +27,105 @@ export async function sha256Hex(input: string): Promise<string> {
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('');
     } catch {
-      // crypto.subtle can fail in insecure contexts
+      // fall through
     }
   }
   return sha256(input);
 }
 
-// Flatten locationDetail into a string for the output document
+// Convert DateYM to "YYYY-MM" string, or undefined if empty
+function dateToIso(d: DateYM | undefined): string | undefined {
+  if (!d || !d.year || !d.month) return undefined;
+  return `${d.year}-${d.month}`;
+}
+
+function yesNoToBool(val: string): boolean | undefined {
+  if (val === 'Yes') return true;
+  if (val === 'No') return false;
+  return undefined;
+}
+
+// Recursively strip undefined values, empty strings, empty arrays, empty objects
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function stripEmpty(obj: any): any {
+  if (Array.isArray(obj)) {
+    const filtered = obj.map(stripEmpty).filter((v) => v !== undefined);
+    return filtered.length > 0 ? filtered : undefined;
+  }
+  if (obj !== null && typeof obj === 'object') {
+    const cleaned: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      const val = stripEmpty(v);
+      if (val !== undefined) cleaned[k] = val;
+    }
+    return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+  }
+  if (typeof obj === 'string') return obj.length > 0 ? obj : undefined;
+  return obj;
+}
+
 function resolveLocation(entry: WorkEntry): string | undefined {
   if (entry.locationDetail) return formatWorkLocation(entry.locationDetail) || undefined;
   return entry.location?.trim() || undefined;
 }
 
-function trimWork(entries: WorkEntry[]): Omit<WorkEntry, 'locationDetail'>[] {
+function resolveNoticePeriod(p: Preferences): string | undefined {
+  if (!p.noticePeriod) return undefined;
+  if (p.noticePeriod === 'Other' && p.noticePeriodCustom) {
+    const amt = p.noticePeriodCustom.amount.trim();
+    const unit = p.noticePeriodCustom.unit;
+    if (amt && unit) return `${amt} ${unit}`;
+    return undefined;
+  }
+  return p.noticePeriod;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildWork(entries: WorkEntry[]): any[] {
   return entries
     .filter((w) => w.company.trim() || w.position.trim())
     .map((w) => {
       const loc = resolveLocation(w);
-      const cleaned: Omit<WorkEntry, 'locationDetail'> = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const out: any = {
         company: w.company.trim(),
         position: w.position.trim(),
-        startDate: w.startDate,
-        current: w.current,
-        highlights: w.highlights.map((h) => h.trim()).filter(Boolean),
+        startDate: dateToIso(w.startDate),
+        current: w.current || undefined,
       };
-      if (loc) cleaned.location = loc;
-      if (w.description?.trim()) cleaned.description = w.description.trim();
-      if (w.url?.trim()) cleaned.url = w.url.trim();
-      if (!w.current && w.endDate && (w.endDate.month || w.endDate.year)) {
-        cleaned.endDate = w.endDate;
-      }
-      if (w.summary?.trim()) cleaned.summary = w.summary.trim();
-      return cleaned;
+      if (loc) out.location = loc;
+      if (w.description?.trim()) out.description = w.description.trim();
+      if (w.url?.trim()) out.url = w.url.trim();
+      if (!w.current) out.endDate = dateToIso(w.endDate);
+      if (w.summary?.trim()) out.summary = w.summary.trim();
+      const hl = w.highlights.map((h) => h.trim()).filter(Boolean);
+      if (hl.length > 0) out.highlights = hl;
+      return out;
     });
 }
 
-function trimEducation(entries: EducationEntry[]): EducationEntry[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildEducation(entries: EducationEntry[]): any[] {
   return entries
     .filter((e) => e.institution.trim() || e.area.trim())
     .map((e) => {
-      const cleaned: EducationEntry = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const out: any = {
         institution: e.institution.trim(),
         area: e.area.trim(),
         studyType: e.studyType.trim(),
-        courses: e.courses.map((c) => c.trim()).filter(Boolean),
       };
-      if (e.url?.trim()) cleaned.url = e.url.trim();
-      if (e.startDate && (e.startDate.month || e.startDate.year)) {
-        cleaned.startDate = e.startDate;
-      }
-      if (e.endDate && (e.endDate.month || e.endDate.year)) {
-        cleaned.endDate = e.endDate;
-      }
-      if (e.score?.trim()) cleaned.score = e.score.trim();
-      return cleaned;
+      if (e.url?.trim()) out.url = e.url.trim();
+      out.startDate = dateToIso(e.startDate);
+      out.endDate = dateToIso(e.endDate);
+      if (e.score?.trim()) out.score = e.score.trim();
+      const courses = e.courses.map((c) => c.trim()).filter(Boolean);
+      if (courses.length > 0) out.courses = courses;
+      return out;
     });
 }
 
-function trimSkills(skills: SkillGroup[]): SkillGroup[] {
+function buildSkills(skills: SkillGroup[]): SkillGroup[] {
   return skills
     .filter((s) => s.category.trim() && s.keywords.length > 0)
     .map((s) => ({
@@ -94,104 +135,160 @@ function trimSkills(skills: SkillGroup[]): SkillGroup[] {
     }));
 }
 
-function trimCertificates(certs: Certificate[]): Certificate[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildCertificates(certs: Certificate[]): any[] {
   return certs
     .filter((c) => c.name.trim())
     .map((c) => {
-      const cleaned: Certificate = { name: c.name.trim() };
-      if (c.issuer?.trim()) cleaned.issuer = c.issuer.trim();
-      if (c.date && (c.date.month || c.date.year)) cleaned.date = c.date;
-      if (c.expires && (c.expires.month || c.expires.year)) cleaned.expires = c.expires;
-      if (c.url?.trim()) cleaned.url = c.url.trim();
-      return cleaned;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const out: any = { name: c.name.trim() };
+      if (c.issuer?.trim()) out.issuer = c.issuer.trim();
+      out.date = dateToIso(c.date);
+      out.expires = dateToIso(c.expires);
+      if (c.url?.trim()) out.url = c.url.trim();
+      return out;
     });
 }
 
-function trimLanguages(langs: Language[]): Language[] {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildAwards(awards: Award[]): any[] {
+  return awards
+    .filter((a) => a.title.trim())
+    .map((a) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const out: any = { title: a.title.trim() };
+      if (a.issuer?.trim()) out.issuer = a.issuer.trim();
+      out.date = dateToIso(a.date);
+      if (a.description?.trim()) out.description = a.description.trim();
+      return out;
+    });
+}
+
+function buildLanguages(langs: Language[]): Language[] {
   return langs
     .filter((l) => l.language.trim())
     .map((l) => ({ language: l.language.trim(), fluency: l.fluency }));
 }
 
-function trimCompliance(c: Compliance): Compliance {
-  const result: Compliance = {
-    workAuthorization: {
-      authorized: c.workAuthorization.authorized,
-      countries: c.workAuthorization.countries,
-      requiresSponsorship: c.workAuthorization.requiresSponsorship,
-    },
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildCompliance(c: Compliance): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const wa: any = {
+    authorized: yesNoToBool(c.workAuthorization.authorized),
+    requiresSponsorship: yesNoToBool(c.workAuthorization.requiresSponsorship),
   };
-  if (c.workAuthorization.status?.trim()) {
-    result.workAuthorization.status = c.workAuthorization.status.trim();
+  if (c.workAuthorization.countries.length > 0) {
+    wa.countries = c.workAuthorization.countries;
   }
+  const allStatuses = [...c.workAuthorization.statuses];
+  if (c.workAuthorization.customStatus?.trim()) {
+    allStatuses.push(c.workAuthorization.customStatus.trim());
+  }
+  if (allStatuses.length > 0) wa.status = allStatuses;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = { workAuthorization: wa };
+
   if (c.unitedStatesEeoc) {
     const us = c.unitedStatesEeoc;
     if (us.gender || us.raceEthnicity.length || us.veteranStatus || us.disability) {
-      result.unitedStatesEeoc = us;
+      result.eeoc = {
+        gender: us.gender || undefined,
+        raceEthnicity: us.raceEthnicity.length > 0 ? us.raceEthnicity : undefined,
+        veteranStatus: us.veteranStatus || undefined,
+        disability: us.disability || undefined,
+      };
     }
   }
   if (c.canadaEmploymentEquity) {
     const ca = c.canadaEmploymentEquity;
     if (ca.indigenousIdentity || ca.visibleMinority || ca.personWithDisability) {
-      result.canadaEmploymentEquity = ca;
+      result.canadianEquity = {
+        indigenousIdentity: ca.indigenousIdentity || undefined,
+        visibleMinority: ca.visibleMinority || undefined,
+        personWithDisability: ca.personWithDisability || undefined,
+      };
     }
   }
   return result;
 }
 
-function trimPreferences(p: Preferences): Preferences {
-  const result: Preferences = {
-    desiredRoles: p.desiredRoles.map((r) => r.trim()).filter(Boolean),
-    workArrangement: p.workArrangement,
-    willingToRelocate: p.willingToRelocate,
-  };
-  if (p.salary && (p.salary.min !== undefined || p.salary.max !== undefined)) {
-    result.salary = p.salary;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildPreferences(p: Preferences): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const out: any = {};
+  const roles = p.desiredRoles.map((r) => r.trim()).filter(Boolean);
+  if (roles.length > 0) out.desiredRoles = roles;
+  if (p.salary && (p.salary.min || p.salary.max)) {
+    out.salary = p.salary;
   }
-  if (p.availableFrom && (p.availableFrom.month || p.availableFrom.year)) {
-    result.availableFrom = p.availableFrom;
-  }
-  if (p.noticePeriod?.trim()) result.noticePeriod = p.noticePeriod.trim();
-  return result;
+  if (p.workArrangement.length > 0) out.workArrangement = p.workArrangement;
+  const relocate = yesNoToBool(p.willingToRelocate);
+  if (relocate !== undefined) out.willingToRelocate = relocate;
+  const avail = dateToIso(p.availableFrom);
+  if (avail) out.availableFrom = avail;
+  const notice = resolveNoticePeriod(p);
+  if (notice) out.noticePeriod = notice;
+  return out;
 }
 
-export function buildDocument(
-  form: FormState,
-  meta: { generatedAt: string; expiresAt: string },
-): CredentiaDocument {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function buildDocument(form: FormState, meta: { generatedAt: string; expiresAt: string }): any {
+  const b = form.basics;
+  const profiles = b.profiles
+    .filter((p) => p.username?.trim() || p.url?.trim())
+    .map((p) => ({
+      network: p.network,
+      username: p.username?.trim() || undefined,
+      url: p.url?.trim() || undefined,
+    }));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const loc: any = { city: b.location.city.trim() };
+  if (b.location.address?.trim()) loc.address = b.location.address.trim();
+  if (b.location.region?.trim()) loc.region = b.location.region.trim();
+  if (b.location.postalCode?.trim()) loc.postalCode = b.location.postalCode.trim();
+  if (b.location.countryCode.trim()) loc.countryCode = b.location.countryCode.trim();
+
   const basics = {
-    ...form.basics,
-    firstName: form.basics.firstName.trim(),
-    lastName: form.basics.lastName.trim(),
-    email: form.basics.email.trim(),
-    phone: form.basics.phone.trim(),
-    profiles: form.basics.profiles
-      .filter((p) => p.username?.trim() || p.url?.trim())
-      .map((p) => ({
-        network: p.network,
-        username: p.username?.trim() || undefined,
-        url: p.url?.trim() || undefined,
-      })),
+    name: {
+      first: b.firstName.trim() || undefined,
+      middle: b.middleName?.trim() || undefined,
+      last: b.lastName.trim() || undefined,
+      preferred: b.preferredName?.trim() || undefined,
+    },
+    email: b.email.trim(),
+    phone: b.phone.trim(),
+    headline: b.headline?.trim() || undefined,
+    url: b.url?.trim() || undefined,
+    summary: b.summary?.trim() || undefined,
+    location: loc,
+    profiles: profiles.length > 0 ? profiles : undefined,
   };
-  return {
+
+  const doc = {
     $credentia: {
       version: VERSION,
       generatedAt: meta.generatedAt,
       expiresAt: meta.expiresAt,
     },
     basics,
-    work: trimWork(form.work) as WorkEntry[],
-    education: trimEducation(form.education),
-    skills: trimSkills(form.skills),
-    certificates: trimCertificates(form.certificates),
-    languages: trimLanguages(form.languages),
-    compliance: trimCompliance(form.compliance),
-    preferences: trimPreferences(form.preferences),
+    work: buildWork(form.work),
+    education: buildEducation(form.education),
+    skills: buildSkills(form.skills),
+    certificates: buildCertificates(form.certificates),
+    awards: buildAwards(form.awards),
+    languages: buildLanguages(form.languages),
+    compliance: buildCompliance(form.compliance),
+    preferences: buildPreferences(form.preferences),
   };
+
+  return stripEmpty(doc);
 }
 
 export interface GenerateResult {
-  document: CredentiaDocument;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  document: any;
   json: string;
   markdown: string;
   token: string;
@@ -218,7 +315,7 @@ export async function generateCredentiaFile(form: FormState): Promise<GenerateRe
     const supabase = getSupabase();
     const { error } = await supabase.from('tokens').insert({
       token_hash: token,
-      country_code: document.basics.location.countryCode,
+      country_code: form.basics.location.countryCode,
     });
     if (!error) registered = true;
   } catch {
@@ -227,8 +324,8 @@ export async function generateCredentiaFile(form: FormState): Promise<GenerateRe
 
   const json = JSON.stringify(document, null, 2);
   const markdown = buildMarkdown(document);
-  const first = (document.basics.firstName || 'credentia').toLowerCase().replace(/\s+/g, '-');
-  const last = (document.basics.lastName || 'file').toLowerCase().replace(/\s+/g, '-');
+  const first = (form.basics.firstName || 'credentia').toLowerCase().replace(/\s+/g, '-');
+  const last = (form.basics.lastName || 'file').toLowerCase().replace(/\s+/g, '-');
   const jsonFilename = `${first}-${last}.credentia.json`;
   const mdFilename = `${first}-${last}.credentia.md`;
   return {

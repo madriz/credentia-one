@@ -16,9 +16,7 @@ function highlightJson(json: string): string {
       /("(?:[^"\\]|\\.)*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g,
       (match, str, colon, kw, num) => {
         if (str) {
-          if (colon) {
-            return `<span style="color:#00ACED">${str}</span>${colon}`;
-          }
+          if (colon) return `<span style="color:#00ACED">${str}</span>${colon}`;
           return `<span style="color:#16A34A">${str}</span>`;
         }
         if (kw) return `<span style="color:#9CA3AF">${kw}</span>`;

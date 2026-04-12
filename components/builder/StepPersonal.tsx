@@ -1,7 +1,9 @@
 import type { Basics, SocialProfile } from '@/lib/schema';
 import { COUNTRIES } from '@/lib/countries';
+import { getStatesForCountry } from '@/lib/stateProvinces';
 import { FormField, TextAreaField, SelectField } from './FormField';
 import { ArrayField } from './ArrayField';
+import AutocompleteInput from './AutocompleteInput';
 
 interface Props {
   value: Basics;
@@ -21,6 +23,11 @@ export default function StepPersonal({ value, onChange }: Props) {
     onChange({ ...value, [key]: v });
   const setLoc = <K extends keyof Basics['location']>(key: K, v: Basics['location'][K]) =>
     onChange({ ...value, location: { ...value.location, [key]: v } });
+
+  const states = getStatesForCountry(value.location.countryCode);
+  const stateOptions = states
+    ? states.map((s) => `${s.name} (${s.code})`)
+    : null;
 
   return (
     <div className="space-y-8">
@@ -50,13 +57,26 @@ export default function StepPersonal({ value, onChange }: Props) {
         <div className="grid md:grid-cols-2 gap-5">
           <FormField label="Street address" value={value.location.address ?? ''} onChange={(v) => setLoc('address', v)} />
           <FormField label="City" required value={value.location.city} onChange={(v) => setLoc('city', v)} />
-          <FormField label="State / Province / Region" value={value.location.region ?? ''} onChange={(v) => setLoc('region', v)} />
+          {stateOptions ? (
+            <AutocompleteInput
+              label="State / Province"
+              value={value.location.region ?? ''}
+              onChange={(v) => setLoc('region', v)}
+              suggestions={stateOptions}
+              placeholder="Type to search"
+            />
+          ) : (
+            <FormField label="State / Province / Region" value={value.location.region ?? ''} onChange={(v) => setLoc('region', v)} />
+          )}
           <FormField label="Postal code" value={value.location.postalCode ?? ''} onChange={(v) => setLoc('postalCode', v)} />
           <SelectField
             label="Country"
             required
             value={value.location.countryCode}
-            onChange={(v) => setLoc('countryCode', v)}
+            onChange={(v) => {
+              setLoc('countryCode', v);
+              if (v !== value.location.countryCode) setLoc('region', '');
+            }}
             placeholder="Select a country"
             options={COUNTRIES.map((c) => ({ value: c.code, label: `${c.code} - ${c.name}` }))}
           />

@@ -1,6 +1,3 @@
-// Client-side PDF text extraction using pdfjs-dist.
-// Extracts basic contact info from resume text.
-
 import type { FormState } from './schema';
 import { emptyForm } from './schema';
 
@@ -14,7 +11,7 @@ interface ExtractedFields {
 
 export async function extractTextFromPdf(file: File): Promise<string> {
   const pdfjsLib = await import('pdfjs-dist');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({
@@ -39,17 +36,14 @@ export async function extractTextFromPdf(file: File): Promise<string> {
 function extractFields(text: string): ExtractedFields {
   const result: ExtractedFields = {};
 
-  // Email
   const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   if (emailMatch) result.email = emailMatch[0];
 
-  // Phone
   const phoneMatch = text.match(
     /(?:\+?1[-.\s]?)?(?:\(?[0-9]{3}\)?[-.\s]?)?[0-9]{3}[-.\s]?[0-9]{4}/,
   );
   if (phoneMatch) result.phone = phoneMatch[0].trim();
 
-  // LinkedIn
   const linkedinMatch = text.match(
     /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?/,
   );
@@ -59,7 +53,6 @@ function extractFields(text: string): ExtractedFields {
     result.linkedinUrl = url;
   }
 
-  // Name: first non-empty line that looks like a name
   const lines = text.split(/\n/).map((l) => l.trim()).filter(Boolean);
   for (const line of lines) {
     const cleaned = line.replace(/[^a-zA-Z\s'-]/g, '').trim();
