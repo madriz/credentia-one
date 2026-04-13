@@ -13,6 +13,41 @@ License: Apache 2.0
 - Pilot phase: API keys issued manually. Pricing negotiated directly.
 - Future: self-serve signup, Stripe integration, usage dashboard.
 
+## Platform Roadmap
+
+### Additional Platforms (Planned)
+- iOS / Android mobile application: candidates store and manage their Credentia One file locally on-device. Generate, edit, and share files from mobile.
+- Microsoft Word plugin: generate a .credentia.json file from a structured Word template with cryptographic verification.
+- Chrome browser extension: auto-fill employer application forms (Workday, Greenhouse, SAP, Oracle, iCIMS, Lever) from a .credentia.json file.
+
+### Multilingual Support (Planned)
+The Credentia One interface will be localized into the following languages:
+- English (default)
+- French
+- Spanish
+- Italian
+- German
+- Polish
+- Dutch
+- Bulgarian
+- Croatian
+- Greek
+- Czech
+- Danish
+- Estonian
+- Finnish
+- Swedish
+- Hungarian
+- Latvian
+- Lithuanian
+- Maltese
+- Portuguese
+- Romanian
+- Slovak
+- Slovenian
+
+This covers all official EU languages plus key global markets. The candidate's .credentia.json file output is always in English (the standard is language-neutral for machine readability). The UI, labels, instructions, help text, and legal/privacy copy are localized.
+
 ## Architecture
 - Static Next.js 14 site deployed on GitHub Pages
 - Custom domain: credentia.one (DNS via GoDaddy, A records to GitHub Pages IPs)
@@ -100,15 +135,18 @@ License: Apache 2.0
 - v5.1 (commit 15912e2): Apply with Credentia One mockup on employer page.
 - v6 (commit 88a538c): Commercial model. Employer verification API (verify_token RPC function). Landing page rewrite with dual-audience messaging and sourced statistics. Employer sales page with API documentation, mockup, and contact form. Pricing section (free for candidates, pay per job posting). Updated About, Privacy, Verify, and Builder pages.
 - v7 (commit 371211d): International expansion. Added compliance blocks for UK, EU, Australia, and New Zealand. Visa status presets for 6 regions. Conditional disclosure forms based on authorized countries. Updated schema, markdown export, and about page.
-- v7.1 (this commit): Privacy policy expanded for UK, EU, Australia, NZ. Headline layout fix. Postal/ZIP Code label. Employer page compliance note. Cookie consent GDPR language.
+- v7.1 (commit da13c74): Privacy policy expanded for UK, EU, Australia, NZ. Headline layout fix. Postal/ZIP Code label. Employer page compliance note. Cookie consent GDPR language.
+- v7.2 (this commit): Added platform roadmap (mobile, Word plugin, Chrome extension) and multilingual support plan (24 languages) to project status. Created localization rules document.
 
 ## Open Items / Backlog
 - Build the Receiver portal (madriz/credentia-receiver)
 - Create Supabase verify_token RPC function, employers table, job_postings table, verification_log table
-- Self-serve employer onboarding (signup, payment via Stripe, API key generation)
+- Resume parser improvements (better heuristics for PDF extraction)
+- iOS / Android app (React Native, encrypted local storage, Supabase token registration)
+- Microsoft Word plugin (Office Add-in, content controls mapped to schema fields)
+- Chrome extension (Manifest V3, ATS DOM field mapping for top 6 platforms)
+- Multilingual UI (i18n framework, 24 languages, translation pipeline)
+- Self-serve employer onboarding (signup, Stripe payment, API key generation)
 - Employer usage dashboard
 - Billing and invoicing system
-- Explore additional delivery channels (browser extension, mobile, office plugins) based on adoption
-- Resume parser improvements (better heuristics for PDF extraction)
-- Internationalization (i18n) for the builder UI
-- Phase 4 expansion: Japan, South Korea, Singapore, India compliance blocks
+- Phase 4 compliance expansion: Japan, South Korea, Singapore, India
