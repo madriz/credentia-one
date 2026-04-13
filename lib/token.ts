@@ -210,6 +210,85 @@ function buildCompliance(c: Compliance): any {
       };
     }
   }
+
+  const meaningful = (v: string | undefined) =>
+    !!v && v !== 'Prefer Not to Disclose';
+
+  if (c.ukEqualityAct) {
+    const uk = c.ukEqualityAct;
+    if (
+      meaningful(uk.gender) || meaningful(uk.ethnicity) || meaningful(uk.disability) ||
+      meaningful(uk.religion) || meaningful(uk.sexualOrientation) || meaningful(uk.ageRange)
+    ) {
+      result.ukEqualityAct = {
+        gender: uk.gender || undefined,
+        ethnicity: uk.ethnicity || undefined,
+        disability: uk.disability || undefined,
+        religion: uk.religion || undefined,
+        sexualOrientation: uk.sexualOrientation || undefined,
+        ageRange: uk.ageRange || undefined,
+      };
+    }
+  }
+
+  if (c.euDisclosures) {
+    const eu = c.euDisclosures;
+    if (
+      eu.gdprConsent ||
+      meaningful(eu.dataRetentionPreference) ||
+      meaningful(eu.gender) ||
+      meaningful(eu.disability)
+    ) {
+      result.euDisclosures = {
+        gdprConsent: eu.gdprConsent ? true : undefined,
+        gdprConsentTimestamp: eu.gdprConsent ? eu.gdprConsentTimestamp || undefined : undefined,
+        dataRetentionPreference: eu.dataRetentionPreference || undefined,
+        gender: eu.gender || undefined,
+        disability: eu.disability || undefined,
+      };
+    }
+  }
+
+  if (c.australianEqualOpportunity) {
+    const au = c.australianEqualOpportunity;
+    if (
+      meaningful(au.indigenousStatus) || meaningful(au.gender) ||
+      meaningful(au.disability) || meaningful(au.languageAtHome)
+    ) {
+      const language = au.languageAtHome === 'Other' && au.languageAtHomeOther.trim()
+        ? au.languageAtHomeOther.trim()
+        : au.languageAtHome || undefined;
+      result.australianEqualOpportunity = {
+        indigenousStatus: au.indigenousStatus || undefined,
+        gender: au.gender || undefined,
+        disability: au.disability || undefined,
+        languageAtHome: language,
+      };
+    }
+  }
+
+  if (c.newZealandDisclosures) {
+    const nz = c.newZealandDisclosures;
+    const ethnicityList = nz.ethnicity
+      .map((e) => (e === 'Other (please specify)' && nz.ethnicityOther.trim()
+        ? nz.ethnicityOther.trim()
+        : e))
+      .filter((e) => e && e !== 'Prefer Not to Disclose');
+    if (
+      ethnicityList.length > 0 ||
+      meaningful(nz.gender) ||
+      meaningful(nz.disability) ||
+      nz.iwi.trim()
+    ) {
+      result.newZealandDisclosures = {
+        ethnicity: ethnicityList.length > 0 ? ethnicityList : undefined,
+        gender: nz.gender || undefined,
+        disability: nz.disability || undefined,
+        iwi: nz.iwi.trim() || undefined,
+      };
+    }
+  }
+
   return result;
 }
 

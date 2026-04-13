@@ -112,10 +112,47 @@ export interface CanadaEquity {
   personWithDisability: string;
 }
 
+export interface UKEqualityAct {
+  gender: string;
+  ethnicity: string;
+  disability: string;
+  religion: string;
+  sexualOrientation: string;
+  ageRange: string;
+}
+
+export interface EUDisclosures {
+  gdprConsent: boolean;
+  gdprConsentTimestamp: string;
+  dataRetentionPreference: string;
+  gender: string;
+  disability: string;
+}
+
+export interface AustralianEqualOpportunity {
+  indigenousStatus: string;
+  gender: string;
+  disability: string;
+  languageAtHome: string;
+  languageAtHomeOther: string;
+}
+
+export interface NewZealandDisclosures {
+  ethnicity: string[];
+  ethnicityOther: string;
+  gender: string;
+  disability: string;
+  iwi: string;
+}
+
 export interface Compliance {
   workAuthorization: WorkAuthorization;
   unitedStatesEeoc?: UsEeoc;
   canadaEmploymentEquity?: CanadaEquity;
+  ukEqualityAct?: UKEqualityAct;
+  euDisclosures?: EUDisclosures;
+  australianEqualOpportunity?: AustralianEqualOpportunity;
+  newZealandDisclosures?: NewZealandDisclosures;
 }
 
 export interface SalaryRange {
@@ -229,6 +266,35 @@ export function emptyForm(): FormState {
         indigenousIdentity: '',
         visibleMinority: '',
         personWithDisability: '',
+      },
+      ukEqualityAct: {
+        gender: '',
+        ethnicity: '',
+        disability: '',
+        religion: '',
+        sexualOrientation: '',
+        ageRange: '',
+      },
+      euDisclosures: {
+        gdprConsent: false,
+        gdprConsentTimestamp: '',
+        dataRetentionPreference: '',
+        gender: '',
+        disability: '',
+      },
+      australianEqualOpportunity: {
+        indigenousStatus: '',
+        gender: '',
+        disability: '',
+        languageAtHome: '',
+        languageAtHomeOther: '',
+      },
+      newZealandDisclosures: {
+        ethnicity: [],
+        ethnicityOther: '',
+        gender: '',
+        disability: '',
+        iwi: '',
       },
     },
     preferences: {

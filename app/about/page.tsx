@@ -58,11 +58,16 @@ export default function AboutPage() {
           <h2 className="font-serif text-2xl text-text-primary mb-4">
             For the ecosystem
           </h2>
-          <p className="text-text-body">
+          <p className="text-text-body mb-4">
             The Credentia One schema is open source under the Apache 2.0 license. The
             candidate tool is free and will remain free. The verification API is a
             commercial service that ensures file integrity and funds the ongoing
             development of the standard.
+          </p>
+          <p className="text-text-body">
+            The standard currently supports compliance disclosures for the United States,
+            Canada, the United Kingdom, the European Union, Australia, and New Zealand,
+            with additional regions planned.
           </p>
         </section>
 

@@ -114,6 +114,74 @@ export function buildMarkdown(doc: any): string {
     if (wa.requiresSponsorship !== undefined) {
       lines.push(`Requires sponsorship: ${wa.requiresSponsorship ? 'Yes' : 'No'}`);
     }
+    if (wa.status?.length > 0) {
+      lines.push(`Visa / immigration status: ${wa.status.join(', ')}`);
+    }
+    lines.push('');
+  }
+
+  const compliance = doc.compliance ?? {};
+
+  if (compliance.eeoc) {
+    lines.push('## United States (EEOC Voluntary Self-Identification)');
+    const e = compliance.eeoc;
+    if (e.gender) lines.push(`Gender: ${e.gender}`);
+    if (e.raceEthnicity?.length > 0) lines.push(`Race / Ethnicity: ${e.raceEthnicity.join(', ')}`);
+    if (e.veteranStatus) lines.push(`Veteran status: ${e.veteranStatus}`);
+    if (e.disability) lines.push(`Disability: ${e.disability}`);
+    lines.push('');
+  }
+
+  if (compliance.canadianEquity) {
+    lines.push('## Canada (Employment Equity)');
+    const ca = compliance.canadianEquity;
+    if (ca.indigenousIdentity) lines.push(`Indigenous identity: ${ca.indigenousIdentity}`);
+    if (ca.visibleMinority) lines.push(`Visible minority: ${ca.visibleMinority}`);
+    if (ca.personWithDisability) lines.push(`Person with disability: ${ca.personWithDisability}`);
+    lines.push('');
+  }
+
+  if (compliance.ukEqualityAct) {
+    lines.push('## United Kingdom (Equality Act 2010)');
+    const uk = compliance.ukEqualityAct;
+    if (uk.gender) lines.push(`Gender: ${uk.gender}`);
+    if (uk.ethnicity) lines.push(`Ethnicity: ${uk.ethnicity}`);
+    if (uk.disability) lines.push(`Disability: ${uk.disability}`);
+    if (uk.religion) lines.push(`Religion or belief: ${uk.religion}`);
+    if (uk.sexualOrientation) lines.push(`Sexual orientation: ${uk.sexualOrientation}`);
+    if (uk.ageRange) lines.push(`Age range: ${uk.ageRange}`);
+    lines.push('');
+  }
+
+  if (compliance.euDisclosures) {
+    lines.push('## European Union / EEA (GDPR Disclosures)');
+    const eu = compliance.euDisclosures;
+    if (eu.gdprConsent) {
+      lines.push(`GDPR consent: Yes${eu.gdprConsentTimestamp ? ` (${eu.gdprConsentTimestamp})` : ''}`);
+    }
+    if (eu.dataRetentionPreference) lines.push(`Data retention preference: ${eu.dataRetentionPreference}`);
+    if (eu.gender) lines.push(`Gender: ${eu.gender}`);
+    if (eu.disability) lines.push(`Disability: ${eu.disability}`);
+    lines.push('');
+  }
+
+  if (compliance.australianEqualOpportunity) {
+    lines.push('## Australia (Equal Opportunity)');
+    const au = compliance.australianEqualOpportunity;
+    if (au.indigenousStatus) lines.push(`Indigenous status: ${au.indigenousStatus}`);
+    if (au.gender) lines.push(`Gender: ${au.gender}`);
+    if (au.disability) lines.push(`Disability: ${au.disability}`);
+    if (au.languageAtHome) lines.push(`Language at home: ${au.languageAtHome}`);
+    lines.push('');
+  }
+
+  if (compliance.newZealandDisclosures) {
+    lines.push('## New Zealand (Census Disclosures)');
+    const nz = compliance.newZealandDisclosures;
+    if (nz.ethnicity?.length > 0) lines.push(`Ethnicity: ${nz.ethnicity.join(', ')}`);
+    if (nz.gender) lines.push(`Gender: ${nz.gender}`);
+    if (nz.disability) lines.push(`Disability: ${nz.disability}`);
+    if (nz.iwi) lines.push(`Iwi affiliation: ${nz.iwi}`);
     lines.push('');
   }
 

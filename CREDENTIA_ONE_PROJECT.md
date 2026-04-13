@@ -49,6 +49,7 @@ License: Apache 2.0
 - Based on JSON Resume, extended with $credentia metadata block and compliance block
 - Output format uses ISO 8601 dates (YYYY-MM), nested name object, boolean booleans, and strips empty values
 - Compliance covers: US EEOC (gender, race incl. MENA, veteran, disability), Canadian Employment Equity, work authorization with visa status presets for US and CA
+- Compliance blocks: US EEOC, Canadian Employment Equity, UK Equality Act 2010, EU GDPR disclosures, Australian Equal Opportunity, New Zealand Census disclosures.
 - Schema file: public/credentia-one-schema.json
 
 ## Pages
@@ -98,6 +99,7 @@ License: Apache 2.0
 - v5 (commit 4dd0661): Removed public roadmap. Cleaned up backlog.
 - v5.1 (commit 15912e2): Apply with Credentia One mockup on employer page.
 - v6 (commit 88a538c): Commercial model. Employer verification API (verify_token RPC function). Landing page rewrite with dual-audience messaging and sourced statistics. Employer sales page with API documentation, mockup, and contact form. Pricing section (free for candidates, pay per job posting). Updated About, Privacy, Verify, and Builder pages.
+- v7 (this commit): International expansion. Added compliance blocks for UK, EU, Australia, and New Zealand. Visa status presets for 6 regions. Conditional disclosure forms based on authorized countries. Updated schema, markdown export, and about page.
 
 ## Open Items / Backlog
 - Build the Receiver portal (madriz/credentia-receiver)
@@ -106,6 +108,6 @@ License: Apache 2.0
 - Employer usage dashboard
 - Billing and invoicing system
 - Explore additional delivery channels (browser extension, mobile, office plugins) based on adoption
-- Schema v1.1: additional compliance blocks for EU (GDPR), UK, Australia, India
 - Resume parser improvements (better heuristics for PDF extraction)
 - Internationalization (i18n) for the builder UI
+- Phase 4 expansion: Japan, South Korea, Singapore, India compliance blocks
