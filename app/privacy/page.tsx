@@ -77,7 +77,7 @@ export default function PrivacyPage() {
 
         <section className="mb-10">
           <h2 className="font-serif text-2xl text-text-primary mb-4">Verification API</h2>
-          <p className="text-text-body">
+          <p className="text-text-body mb-4">
             When an employer verifies a candidate&apos;s file through the Credentia One
             API, the following data is processed: the employer&apos;s API key (for
             authentication) and a cryptographic hash (for token lookup). No candidate
@@ -86,30 +86,101 @@ export default function PrivacyPage() {
             ID, the hash checked, the result (verified or not), and the timestamp.
             These logs are retained for audit and billing purposes.
           </p>
-        </section>
-
-        <section className="mb-10">
-          <h2 className="font-serif text-2xl text-text-primary mb-4">
-            PIPEDA (Canada) compliance
-          </h2>
           <p className="text-text-body">
-            Under the Personal Information Protection and Electronic Documents Act
-            (PIPEDA), personal information means information about an identifiable
-            individual. Credentia One does not collect, use, or disclose personal
-            information as defined by PIPEDA. The cryptographic hashes stored in our
-            verification database cannot identify any individual.
+            The verification API is jurisdiction-neutral. It validates cryptographic
+            hashes without accessing, processing, or transmitting any candidate personal
+            data, regardless of the candidate&apos;s location or the jurisdictions
+            covered by their disclosures.
           </p>
         </section>
 
         <section className="mb-10">
-          <h2 className="font-serif text-2xl text-text-primary mb-4">
-            Quebec Law 25 compliance
-          </h2>
+          <h2 className="font-serif text-2xl text-text-primary mb-4">International Data Handling</h2>
+          <p className="text-text-body mb-6">
+            Credentia One is used by candidates applying for positions in multiple
+            jurisdictions. The following outlines how we handle data in compliance with
+            applicable privacy and anti-discrimination laws in each supported region.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">United States</h3>
+          <p className="text-text-body mb-6">
+            Credentia One supports voluntary self-identification fields required by the
+            Equal Employment Opportunity Commission (EEOC), including gender,
+            race/ethnicity, veteran status, and disability status. These disclosures are
+            entered by the candidate in their browser, included in their downloaded
+            file, and are never transmitted to or stored by Credentia One. Employers
+            receiving these files are responsible for storing EEOC data separately from
+            professional credentials as required by federal law.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">Canada</h3>
+          <p className="text-text-body mb-6">
+            Credentia One supports voluntary self-identification fields under the
+            Canadian Employment Equity Act, including Indigenous identity, visible
+            minority status, and disability status. All data remains on the
+            candidate&apos;s device. Credentia One complies with the Personal Information
+            Protection and Electronic Documents Act (PIPEDA) and Quebec&apos;s Act
+            respecting the protection of personal information in the private sector
+            (Law 25). No personal information is collected or stored by our service.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">United Kingdom</h3>
+          <p className="text-text-body mb-6">
+            Credentia One supports voluntary equality monitoring fields aligned with
+            the UK Equality Act 2010, including ethnicity (using ONS census categories),
+            disability, religion, sexual orientation, and age range. This data is
+            generated and stored locally on the candidate&apos;s device. Credentia One
+            does not act as a data controller for this information under the UK General
+            Data Protection Regulation (UK GDPR). Employers who receive and process
+            Credentia files containing this data are responsible for their own
+            compliance with the UK GDPR and the Data Protection Act 2018.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">European Union / EEA</h3>
+          <p className="text-text-body mb-6">
+            Credentia One supports GDPR-aligned disclosures including explicit consent
+            to process personal data, data retention preferences, gender, and disability
+            status. When a candidate checks the GDPR consent box, a timestamp is
+            recorded locally in their file. Credentia One does not process, transmit, or
+            store any candidate personal data. The cryptographic hash registered with
+            our verification service contains no personally identifiable information.
+            Candidates may exercise their right to erasure by simply deleting their
+            .credentia.json file; there is no data on our servers to delete. Employers
+            who process Credentia files are data controllers under the GDPR and are
+            responsible for their own compliance, including providing candidates with
+            privacy notices and honoring data subject access requests.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">Australia</h3>
+          <p className="text-text-body mb-6">
+            Credentia One supports voluntary equal opportunity disclosures aligned with
+            Australian anti-discrimination legislation, including Indigenous status,
+            gender (including the intersex category recognized under Australian law),
+            disability, and primary language. All data remains on the candidate&apos;s
+            device. Credentia One complies with the Australian Privacy Principles (APPs)
+            under the Privacy Act 1988 by not collecting or storing personal
+            information.
+          </p>
+
+          <h3 className="font-serif text-xl text-text-primary mb-2">New Zealand</h3>
           <p className="text-text-body">
-            In compliance with Quebec&apos;s Act respecting the protection of personal
-            information in the private sector (Law 25), consent is obtained before any
-            analytics cookies are set. No personal information is collected or processed
-            without consent.
+            Credentia One supports voluntary disclosures aligned with New Zealand
+            employment practices, including ethnicity (using NZ Census categories),
+            gender (including the gender diverse category), disability, and iwi
+            affiliation for Maori candidates. All data remains on the candidate&apos;s
+            device. Credentia One complies with the Privacy Act 2020 (New Zealand) by
+            not collecting or storing personal information.
+          </p>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="font-serif text-2xl text-text-primary mb-4">Cross-Border Applications</h2>
+          <p className="text-text-body">
+            When a candidate applies for positions in multiple countries, their
+            Credentia file may contain disclosure data for several jurisdictions
+            simultaneously. Each disclosure section is clearly labeled by country or
+            region. Employers are responsible for processing only the disclosures
+            relevant to their jurisdiction and applicable laws.
           </p>
         </section>
 

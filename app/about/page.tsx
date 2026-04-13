@@ -80,11 +80,20 @@ export default function AboutPage() {
             employers can confirm your file was generated using the Credentia One
             standard. That hash contains no personal information.
           </p>
-          <p className="text-text-body">
+          <p className="text-text-body mb-4">
             Employers access the verification API through a simple REST endpoint. Each
             API key is tied to registered job postings. Verification responses are logged
             for audit purposes. No candidate data passes through the verification
             service. Only cryptographic hashes are checked.
+          </p>
+          <p className="text-text-body">
+            The compliance disclosures in each Credentia file are conditional. The form
+            detects which countries a candidate has selected for work authorization and
+            displays only the relevant disclosure sections. A candidate applying in
+            Canada and Australia sees Canadian Employment Equity and Australian Equal
+            Opportunity sections. A candidate applying only in the United States sees
+            only the EEOC section. No one is asked to fill in forms for jurisdictions
+            that do not apply to them.
           </p>
         </section>
       </main>

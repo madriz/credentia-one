@@ -59,7 +59,9 @@ export default function CookieConsent() {
           <div className="container-content py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <p className="text-sm text-text-body">
               This site uses cookies for analytics (Google Analytics). No personal data
-              from your Credentia One file is stored.
+              from your Credentia file is stored. By clicking Accept, you consent to
+              the use of analytics cookies. You may decline without affecting your use
+              of this site.
             </p>
             <div className="flex gap-3 shrink-0">
               <button type="button" className="btn-primary text-sm py-2 px-4" onClick={accept}>

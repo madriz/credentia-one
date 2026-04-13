@@ -4,7 +4,9 @@ export default function Hero() {
   return (
     <section className="container-content py-20 md:py-28">
       <h1 className="font-serif text-4xl md:text-6xl text-text-primary leading-tight max-w-3xl">
-        One file. Any employer. Any country.
+        One file. Any employer.
+        <br />
+        Any country.
       </h1>
       <p className="mt-4 font-serif italic text-lg max-w-2xl" style={{ color: '#666666' }}>
         Standardizing how the world moves professional data.

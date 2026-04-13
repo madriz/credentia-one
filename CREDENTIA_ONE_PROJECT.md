@@ -99,7 +99,8 @@ License: Apache 2.0
 - v5 (commit 4dd0661): Removed public roadmap. Cleaned up backlog.
 - v5.1 (commit 15912e2): Apply with Credentia One mockup on employer page.
 - v6 (commit 88a538c): Commercial model. Employer verification API (verify_token RPC function). Landing page rewrite with dual-audience messaging and sourced statistics. Employer sales page with API documentation, mockup, and contact form. Pricing section (free for candidates, pay per job posting). Updated About, Privacy, Verify, and Builder pages.
-- v7 (this commit): International expansion. Added compliance blocks for UK, EU, Australia, and New Zealand. Visa status presets for 6 regions. Conditional disclosure forms based on authorized countries. Updated schema, markdown export, and about page.
+- v7 (commit 371211d): International expansion. Added compliance blocks for UK, EU, Australia, and New Zealand. Visa status presets for 6 regions. Conditional disclosure forms based on authorized countries. Updated schema, markdown export, and about page.
+- v7.1 (this commit): Privacy policy expanded for UK, EU, Australia, NZ. Headline layout fix. Postal/ZIP Code label. Employer page compliance note. Cookie consent GDPR language.
 
 ## Open Items / Backlog
 - Build the Receiver portal (madriz/credentia-receiver)

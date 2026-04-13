@@ -68,7 +68,7 @@ export default function StepPersonal({ value, onChange }: Props) {
           ) : (
             <FormField label="State / Province / Region" value={value.location.region ?? ''} onChange={(v) => setLoc('region', v)} />
           )}
-          <FormField label="Postal code" value={value.location.postalCode ?? ''} onChange={(v) => setLoc('postalCode', v)} />
+          <FormField label="Postal / ZIP Code" value={value.location.postalCode ?? ''} onChange={(v) => setLoc('postalCode', v)} />
           <SelectField
             label="Country"
             required

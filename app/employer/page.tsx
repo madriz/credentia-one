@@ -202,13 +202,21 @@ export default function EmployerPage() {
 
         <section className="max-w-3xl mb-16">
           <h2 className="font-serif text-2xl text-text-primary mb-4">Security</h2>
-          <p className="text-text-body">
+          <p className="text-text-body mb-4">
             Credentia One is a document standard, not a platform. There is no vendor
             lock-in, no middleware, no data stored on our servers. The .credentia.json
             file is plain text following a published open schema. Your security team can
             audit every field. The verification API validates cryptographic hashes. It
             does not receive, process, or store candidate data. The only data that
             crosses the wire is a hash string and a verification response.
+          </p>
+          <p className="text-text-body">
+            Credentia One files may contain voluntary compliance disclosures for
+            multiple jurisdictions, including the United States, Canada, the United
+            Kingdom, the European Union, Australia, and New Zealand. Employers are
+            responsible for handling these disclosures in accordance with their
+            applicable local laws, including storing equality and diversity data
+            separately from professional credentials where required.
           </p>
         </section>
 
