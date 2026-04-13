@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://credentia.one/credentia-one-schema.json",
+  "title": "Credentia One Document",
+  "description": "Schema for the .credentia.json portable professional-data file.",
+  "type": "object",
+  "required": ["$credentia", "basics"],
+  "properties": {
+    "$credentia": {
+      "type": "object",
+      "required": ["version", "generatedAt", "expiresAt"],
+      "properties": {
+        "version": { "type": "string" },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "token": { "type": "string" },
+        "verifyUrl": { "type": "string", "format": "uri" }
+      }
+    },
+    "basics": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "object",
+          "properties": {
+            "first": { "type": "string" },
+            "middle": { "type": "string" },
+            "last": { "type": "string" },
+            "preferred": { "type": "string" }
+          }
+        },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "headline": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "summary": { "type": "string" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "address": { "type": "string" },
+            "city": { "type": "string" },
+            "region": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "countryCode": { "type": "string", "description": "ISO 3166-1 alpha-2" }
+          }
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "network": { "type": "string" },
+              "username": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      }
+    },
+    "work": { "type": "array", "items": { "type": "object" } },
+    "education": { "type": "array", "items": { "type": "object" } },
+    "skills": { "type": "array", "items": { "type": "object" } },
+    "certificates": { "type": "array", "items": { "type": "object" } },
+    "awards": { "type": "array", "items": { "type": "object" } },
+    "languages": { "type": "array", "items": { "type": "object" } },
+    "compliance": {
+      "type": "object",
+      "description": "Regulatory and voluntary disclosures. All sub-blocks are optional; empty sections should be omitted entirely.",
+      "properties": {
+        "workAuthorization": {
+          "type": "object",
+          "properties": {
+            "authorized": { "type": "boolean" },
+            "requiresSponsorship": { "type": "boolean" },
+            "countries": {
+              "type": "array",
+              "items": { "type": "string", "description": "ISO 3166-1 alpha-2" }
+            },
+            "status": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "eeoc": {
+          "type": "object",
+          "description": "United States EEOC voluntary self-identification.",
+          "properties": {
+            "gender": {
+              "type": "string",
+              "enum": ["Male", "Female", "Non-Binary", "Prefer Not to Disclose"]
+            },
+            "raceEthnicity": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "American Indian or Alaska Native",
+                  "Asian",
+                  "Black or African American",
+                  "Hispanic or Latino",
+                  "Middle Eastern or North African",
+                  "Native Hawaiian or Other Pacific Islander",
+                  "White",
+                  "Two or More Races",
+                  "Prefer Not to Disclose"
+                ]
+              }
+            },
+            "veteranStatus": { "type": "string" },
+            "disability": { "type": "string" }
+          }
+        },
+        "canadianEquity": {
+          "type": "object",
+          "description": "Canadian Employment Equity Act disclosures.",
+          "properties": {
+            "indigenousIdentity": {
+              "type": "string",
+              "enum": ["First Nations", "Inuit", "Metis", "Not Applicable", "Prefer Not to Disclose"]
+            },
+            "visibleMinority": { "type": "string", "enum": ["Yes", "No", "Prefer Not to Disclose"] },
+            "personWithDisability": { "type": "string", "enum": ["Yes", "No", "Prefer Not to Disclose"] }
+          }
+        },
+        "ukEqualityAct": {
+          "type": "object",
+          "description": "UK Equality Act 2010 voluntary disclosures. ONS ethnicity categories.",
+          "properties": {
+            "gender": { "type": "string", "enum": ["Male", "Female", "Non-Binary", "Prefer Not to Disclose"] },
+            "ethnicity": {
+              "type": "string",
+              "enum": [
+                "White: English, Welsh, Scottish, Northern Irish, or British",
+                "White: Irish",
+                "White: Gypsy or Irish Traveller",
+                "White: Roma",
+                "White: Any other White background",
+                "Mixed or Multiple: White and Black Caribbean",
+                "Mixed or Multiple: White and Black African",
+                "Mixed or Multiple: White and Asian",
+                "Mixed or Multiple: Any other Mixed or Multiple background",
+                "Asian or Asian British: Indian",
+                "Asian or Asian British: Pakistani",
+                "Asian or Asian British: Bangladeshi",
+                "Asian or Asian British: Chinese",
+                "Asian or Asian British: Any other Asian background",
+                "Black, African, Caribbean or Black British: African",
+                "Black, African, Caribbean or Black British: Caribbean",
+                "Black, African, Caribbean or Black British: Any other Black, African, or Caribbean background",
+                "Other ethnic group: Arab",
+                "Other ethnic group: Any other ethnic group",
+                "Prefer Not to Disclose"
+              ]
+            },
+            "disability": {
+              "type": "string",
+              "enum": ["Yes (Equality Act 2010)", "No", "Prefer Not to Disclose"]
+            },
+            "religion": {
+              "type": "string",
+              "enum": [
+                "No religion", "Christian", "Buddhist", "Hindu", "Jewish",
+                "Muslim", "Sikh", "Other", "Prefer Not to Disclose"
+              ]
+            },
+            "sexualOrientation": {
+              "type": "string",
+              "enum": ["Heterosexual", "Gay/Lesbian", "Bisexual", "Other", "Prefer Not to Disclose"]
+            },
+            "ageRange": {
+              "type": "string",
+              "enum": ["16-24", "25-34", "35-44", "45-54", "55-64", "65+", "Prefer Not to Disclose"]
+            }
+          }
+        },
+        "euDisclosures": {
+          "type": "object",
+          "description": "EU / EEA GDPR disclosures.",
+          "properties": {
+            "gdprConsent": { "type": "boolean" },
+            "gdprConsentTimestamp": { "type": "string", "format": "date-time" },
+            "dataRetentionPreference": {
+              "type": "string",
+              "enum": [
+                "Delete after 6 months",
+                "Delete after 12 months",
+                "Retain until withdrawn",
+                "Prefer Not to Disclose"
+              ]
+            },
+            "gender": { "type": "string", "enum": ["Male", "Female", "Non-Binary", "Prefer Not to Disclose"] },
+            "disability": { "type": "string", "enum": ["Yes", "No", "Prefer Not to Disclose"] }
+          }
+        },
+        "australianEqualOpportunity": {
+          "type": "object",
+          "description": "Australian equal opportunity and census disclosures.",
+          "properties": {
+            "indigenousStatus": {
+              "type": "string",
+              "enum": [
+                "Aboriginal",
+                "Torres Strait Islander",
+                "Both Aboriginal and Torres Strait Islander",
+                "Neither",
+                "Prefer Not to Disclose"
+              ]
+            },
+            "gender": {
+              "type": "string",
+              "enum": ["Male", "Female", "Non-Binary", "Intersex", "Prefer Not to Disclose"]
+            },
+            "disability": { "type": "string", "enum": ["Yes", "No", "Prefer Not to Disclose"] },
+            "languageAtHome": { "type": "string" }
+          }
+        },
+        "newZealandDisclosures": {
+          "type": "object",
+          "description": "New Zealand census-aligned disclosures.",
+          "properties": {
+            "ethnicity": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "NZ census ethnicity categories; multi-select. 'Other' values are replaced with the user-specified text."
+            },
+            "gender": {
+              "type": "string",
+              "enum": ["Male", "Female", "Gender Diverse", "Prefer Not to Disclose"]
+            },
+            "disability": { "type": "string", "enum": ["Yes", "No", "Prefer Not to Disclose"] },
+            "iwi": { "type": "string", "description": "Free-text iwi affiliation for Maori." }
+          }
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "desiredRoles": { "type": "array", "items": { "type": "string" } },
+        "salary": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "currency": { "type": "string" },
+            "period": { "type": "string" }
+          }
+        },
+        "workArrangement": { "type": "array", "items": { "type": "string" } },
+        "willingToRelocate": { "type": "boolean" },
+        "availableFrom": { "type": "string" },
+        "noticePeriod": { "type": "string" }
+      }
+    }
+  }
+}
