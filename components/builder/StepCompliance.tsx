@@ -300,8 +300,14 @@ export default function StepCompliance({ value, onChange }: Props) {
   );
 
   const handleGdprConsent = (checked: boolean) => {
-    setEu('gdprConsent', checked);
-    setEu('gdprConsentTimestamp', checked ? new Date().toISOString() : '');
+    onChange({
+      ...value,
+      euDisclosures: {
+        ...eu,
+        gdprConsent: checked,
+        gdprConsentTimestamp: checked ? new Date().toISOString() : '',
+      },
+    });
   };
 
   return (

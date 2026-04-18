@@ -74,8 +74,15 @@ export default function StepPersonal({ value, onChange }: Props) {
             required
             value={value.location.countryCode}
             onChange={(v) => {
-              setLoc('countryCode', v);
-              if (v !== value.location.countryCode) setLoc('region', '');
+              const prev = value.location.countryCode;
+              onChange({
+                ...value,
+                location: {
+                  ...value.location,
+                  countryCode: v,
+                  region: v !== prev ? '' : value.location.region,
+                },
+              });
             }}
             placeholder="Select a country"
             options={COUNTRIES.map((c) => ({ value: c.code, label: `${c.code} - ${c.name}` }))}
